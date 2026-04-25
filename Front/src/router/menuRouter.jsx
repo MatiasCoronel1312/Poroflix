@@ -1,6 +1,6 @@
 import { Carrito } from "../pages/Carrito";
 import { Historial } from "../pages/Historial";
-import { Home } from "../pages/home";
+import { Home } from "../pages/Home";
 
 export const menuRouter = [
   {
