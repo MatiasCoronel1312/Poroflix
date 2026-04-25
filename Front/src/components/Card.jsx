@@ -1,8 +1,9 @@
-import React from 'react'
+import { Link } from "react-router-dom";
 
 export const Card = ({id,tittle,director,category,description,duration,img}) => {
 
   return (
+    <Link to= {`/pelicula/${id}`}> 
     <div className='text-white hover:bg-black w-52 h-52 p-2 rounded-2xl duration-800 hover:cursor-pointer'>
         <div className='h-[50%]'>
             <img src={img} alt="" className='rounded-2xl' />
@@ -17,6 +18,8 @@ export const Card = ({id,tittle,director,category,description,duration,img}) => 
             <p className='text-[12px] truncate'>{description}</p>
         </div>
     </div>
+    </Link>
+  
 
   )
 }
