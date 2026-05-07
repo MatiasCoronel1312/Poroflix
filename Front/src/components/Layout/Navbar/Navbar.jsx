@@ -18,7 +18,7 @@ export const Navbar = () => {
     <></>;
 
   return (
-    <header className="bg-black flex justify-between items-center h-28.75 w-full px-6 ">
+    <header className="bg-black flex justify-between items-center h-28.75 w-full px-6 font-extrabold">
       <Logo />
       <nav className="w-full pl-5">
         <div className="flex justify-between h-10 w-full items-center text-2xl text-white">
