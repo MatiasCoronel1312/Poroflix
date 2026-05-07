@@ -34,7 +34,7 @@ const Footer = () => {
             rel="noopener noreferrer" 
             className="hover:text-sky-400 transition-all duration-300"
           >
-            <i className="fa-brands fa-x-twitter"></i>
+            <i className="fa-brands fa-x-twitter "></i>
           </a>
         </div>
 
