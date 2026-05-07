@@ -29,3 +29,68 @@ class Movie(db.Model):
             
         }
     
+#crea la DB
+with app.app_context():
+    db.create_all()
+
+
+#Crear película
+@app.route("/movies", methods=["POST"])
+def create_movie():
+    data = request.json
+
+    movie = Movie(
+        title=data["title"],
+        director=data.get("director"),
+        category=data.get("category"),
+        description=data.get("description"),
+        duration=data.get("duration"),
+        img=data.get("img")
+    )
+
+    db.session.add(movie)
+    db.session.commit()
+
+    return jsonify(movie.to_dict()), 201
+    
+#Obtener todas
+@app.route("/movies", methods=["GET"])
+def get_movies():
+    movies = Movie.query.all()
+    return jsonify([m.to_dict() for m in movies])
+
+# Obtener una
+@app.route("/movies/<int:id>", methods=["GET"])
+def get_movie(id):
+    movie = Movie.query.get_or_404(id)
+    return jsonify(movie.to_dict())
+
+#Actualizar
+@app.route("/movies/<int:id>", methods=["PUT"])
+def update_movie(id):
+    movie = Movie.query.get_or_404(id)
+    data = request.json
+
+    movie.title = data.get("title", movie.title)
+    movie.director = data.get("director", movie.director)
+    movie.category = data.get("category", movie.category)
+    movie.description = data.get("description", movie.description)
+    movie.duration = data.get("duration", movie.duration)
+    movie.img = data.get("img", movie.img)
+
+    db.session.commit()
+
+    return jsonify(movie.to_dict())
+
+#Eliminar
+@app.route("/movies/<int:id>", methods=["DELETE"])
+def delete_movie(id):
+    movie = Movie.query.get_or_404(id)
+
+    db.session.delete(movie)
+    db.session.commit()
+
+    return jsonify({"message": "Película eliminada"})
+
+if __name__ == "__main__":
+    app.run(debug=True)

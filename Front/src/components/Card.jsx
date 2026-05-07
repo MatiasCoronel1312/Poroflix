@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 
-export const Card = ({id,tittle,director,category,description,duration,img}) => {
+export const Card = ({id,title,director,category,description,duration,img}) => {
 
   return (
     <Link to= {`/pelicula/${id}`}> 
@@ -11,7 +11,7 @@ export const Card = ({id,tittle,director,category,description,duration,img}) => 
         </div>
         <div className='h-[50%]  flex flex-col text-left pt-3'>
             <div className='flex justify-between'>
-                <div className='text-[15px] truncate'>{tittle}</div>
+                <div className='text-[15px] truncate'>{title}</div>
                 <div className='text-[12px]'>{duration}</div>
             </div>
             <div className='text-[12px]'>{director}</div>
