@@ -14,7 +14,7 @@ export const Home = () => {
   
 
   return (
-    <div className="w-full p-10 flex flex-col md:grid grid-cols-3 grid-rows-3 gap-4 justify-between">
+    <div className="w-full py-10 flex flex-col md:grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 grid-rows-3 gap-4 justify-between">
       {movies.map((pelicula) => (
         <Card
           id={pelicula.id}

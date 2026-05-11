@@ -16,8 +16,10 @@ class Movie(db.Model):
     director= db.Column (db.String(100))
     category = db.Column (db.String(50))
     description= db.Column (db.Text)
+    detail= db.Column (db.Text)
     duration = db.Column (db.Integer)
     img= db.Column (db.String(200))
+    trailer= db.Column (db.String(200))
     
     def to_dict(self):
         return {
@@ -26,9 +28,10 @@ class Movie(db.Model):
             "director": self.director,
             "category": self.category,
             "description": self.description,
+            "detail": self.detail,
             "duration": self.duration,
             "img": self.img,
-            
+            "trailer": self.trailer
         }
     
 #crea la DB
@@ -46,8 +49,10 @@ def create_movie():
         director=data.get("director"),
         category=data.get("category"),
         description=data.get("description"),
+        detail=data.get("detail"),
         duration=data.get("duration"),
-        img=data.get("img")
+        img=data.get("img"),
+        trailer=data.get("trailer")
     )
 
     db.session.add(movie)
@@ -77,8 +82,10 @@ def update_movie(id):
     movie.director = data.get("director", movie.director)
     movie.category = data.get("category", movie.category)
     movie.description = data.get("description", movie.description)
+    movie.detail = data.get("detail", movie.detail)
     movie.duration = data.get("duration", movie.duration)
     movie.img = data.get("img", movie.img)
+    movie.trailer = data.get("trailer", movie.trailer)
 
     db.session.commit()
 
