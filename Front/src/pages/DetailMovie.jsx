@@ -19,8 +19,8 @@ export const DetailMovie = () => {
     <div className="w-full flex">
       <div className="w-[50%]">
         {/* <img className="p-3 rounded-4xl" src={movie.img}></img> */}
-        <iframe width="560" height="315" className="rounded-4xl" src="https://www.youtube.com/embed/auCgsj0MV-M?si=IZrgNORsY3SYGzyy" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
-        <button >Agregar al carrito</button>
+        <iframe width="560" height="315" className="rounded-4xl" src={movie.trailer} title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+        <button className="bt">Agregar al carrito</button>
         <button >Comprar</button>
       </div>
       <div className="w-[50%] p-3">
