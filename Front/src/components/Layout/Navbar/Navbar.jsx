@@ -38,7 +38,7 @@ export const Navbar = () => {
               contador
             }
           </Link>
-          <Link to="/"><button className="hover:cursor-pointer" onClick={handleOpenModal}><UserIcon/></button></Link>
+          <Link ><button className="hover:cursor-pointer" onClick={handleOpenModal}><UserIcon/></button></Link>
         </div>
       </nav>
       {
