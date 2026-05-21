@@ -2,9 +2,16 @@ import React, { useState } from "react";
 import { Logo } from "../../Logo";
 import { Link } from "react-router-dom";
 import { CartIcon } from "./navbarComponent/CartIcon";
+import { UserIcon } from "./navbarComponent/UserIcon";
+import ModalForm from "@/pages/ModalForm";
+import Modals from "@/components/formComponents/Modals";
+import { useStore } from "@/components/contexts/store";
 
 export const Navbar = () => {
   const [sumador, setSumador] = useState(0);
+  const isOpenModal = useStore((state) => state.isOpenModal)
+  const handleOpenModal = useStore((state) => state.handleOpenModal)
+  
   // sumador = 0
   //if(condicion):
     //funcion
@@ -31,9 +38,17 @@ export const Navbar = () => {
               contador
             }
           </Link>
-          <Link to="/">User</Link>
+          <Link to="/"><button className="hover:cursor-pointer" onClick={handleOpenModal}><UserIcon/></button></Link>
         </div>
       </nav>
+      {
+        //if (isOpenModal==False): 
+        //  def nada
+        //else:
+        // def ModalForm
+       // condicion?true: false
+       isOpenModal?<Modals/>:<></>
+      }
     </header>
   );
 };

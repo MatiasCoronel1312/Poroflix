@@ -3,7 +3,7 @@ import logo from "../assets/Logo.png";
 export const Logo = () => {
   return (
     <Link
-      className="h-[90%] flex items-center hover:scale-90 duration-500"
+      className="h-28.75 flex items-center hover:scale-90 duration-500"
       to="/"
     >
       <div className="w-50 h-[90%] relative">
