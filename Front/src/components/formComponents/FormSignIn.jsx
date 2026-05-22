@@ -8,6 +8,9 @@ const FormSignIn = ({handleLogin}) => {
           <h2 className="text-white">
             Suscribase para elegir el plan que se adapte a sus necesidades!
           </h2>
+
+          <input className="bg-slate-200 rounded p-2" type="text" id="usuario" name="usuario" placeholder="Usuario" required></input>
+
           <input
             className="bg-slate-200 rounded p-2"
             type="email"
@@ -24,6 +27,17 @@ const FormSignIn = ({handleLogin}) => {
             id="password"
             name="password"
             placeholder="Contraseña"
+            //value={form.password}
+            //onChange={handleChange}
+            required
+          />
+
+           <input
+            className="bg-slate-200 rounded p-2"
+            type="password"
+            id="password"
+            name="password"
+            placeholder="Confirmar Contraseña"
             //value={form.password}
             //onChange={handleChange}
             required
