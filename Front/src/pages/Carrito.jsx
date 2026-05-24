@@ -1,7 +1,8 @@
 import React from 'react'
+import { Promo } from './Promo'
 
 export const Carrito = () => {
   return (
-    <div>Hola soy um Carrito</div>
+    <Promo/>
   )
 }
