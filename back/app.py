@@ -1,11 +1,14 @@
+import os
+from dotenv import load_dotenv
 from flask import Flask , request, jsonify 
 from flask_sqlalchemy import SQLAlchemy 
 from flask_cors import CORS
 
 app = Flask (__name__)
+
 CORS(app)
 
-app.config ["SQLALCHEMY_DATABASE_URI"] = "sqlite:///database.db"
+app.config ["SQLALCHEMY_DATABASE_URI"] = os.getenv("DATABASE_URL")
 app.config ["SQLALCHEMY_MODIFICATIONS"] = False
 
 db = SQLAlchemy (app)
@@ -102,4 +105,6 @@ def delete_movie(id):
     return jsonify({"message": "Película eliminada"})
 
 if __name__ == "__main__":
+    port = int(os.environ.get("PORT", 5000))
+    app.run(host="0.0.0.0", port=port)
     app.run(debug=True)
