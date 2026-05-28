@@ -1,11 +1,13 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
+const apiUrl = import.meta.env.VITE_API_URL
+
 
 export const DetailMovie = () => {
   const [movie, setMovie] = useState({});
   const { id } = useParams();
   useEffect(() => {
-    fetch(`http://127.0.0.1:5000/movies/${id}`)
+    fetch(`${apiUrl}/movies/${id}`)
       .then((respuesta) => respuesta.json())
       .then((dato) => {
         setMovie(dato);
@@ -14,7 +16,6 @@ export const DetailMovie = () => {
         console.log("error:", error);
       });
   }, []);
-  console.log(movie);
   return (
     <div className="relative h-screen overflow-hidden">
       <div
@@ -41,10 +42,10 @@ export const DetailMovie = () => {
           ></iframe>
           <div className="flex justify-around p-3">
             <button className="inline-flex h-12 animate-background-shine items-center justify-center rounded-md border border-gray-800 bg-[linear-gradient(110deg,#000103,45%,#1e2631,55%,#000103)] bg-size-[200%_100%] px-6 font-medium text-gray-400 transition-colors focus:outline-none focus:ring-2  focus:ring-offset-gray-50 hover:cursor-pointer">
-              Agregar al carrito
+              + Lista
             </button>
             <button className="inline-flex h-12 animate-background-shine items-center justify-center rounded-md border border-gray-800 bg-[linear-gradient(110deg,#000103,45%,#1e2631,55%,#000103)] bg-size-[200%_100%] px-6 font-medium text-gray-400 transition-colors focus:outline-none focus:ring-2 focus:ring-offset-gray-50 hover:cursor-pointer">
-              Comprar
+              Reproducir
             </button>
           </div>
         </div>
