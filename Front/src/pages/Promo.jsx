@@ -22,7 +22,7 @@ export const Promo = () => {
         <PlanSwitch active={active} promoMensual={promoMensual} promoAnual={promoAnual}/>
       </div>
       <div className="w-full px-5 flex justify-around">
-        <div className="bg-black/80 hover:bg-black duration-600 border-3 rounded-3xl border-[#920000] w-[30%] h-72 text-white text-left p-5 flex flex-col justify-between">
+        <div className="bg-black/80 hover:bg-black duration-600 border-3 rounded-3xl border-[#0830c2] w-[30%] h-72 text-white text-left p-5 flex flex-col justify-between">
           <div className="text-xl">Básico con Anuncios</div>
           <div className="text-xs p-3 flex flex-col gap-1">
             <div className="pb-2">2 Dispositivos a la vez.</div>
@@ -30,12 +30,12 @@ export const Promo = () => {
           </div>
           <div className="flex justify-between">
             <div className="font-extrabold">${active === "anual" ? "64490/año" : "7390/mes"}</div>
-            <button className="inline-flex h-8 animate-background-shine items-center justify-center rounded-md border border-[#920000] bg-[linear-gradient(110deg,#000103,45%,#1e2631,55%,#000103)] bg-[length:200%_100%] px-2 font-medium text-gray-400 transition-colors focus:outline-none focus:ring-2 focus:ring-offset-gray-50 hover:cursor-pointer text-xs">Elige este plan</button>
+            <button className="inline-flex h-8 animate-background-shine items-center justify-center rounded-md border border-[#0830c2] bg-[linear-gradient(110deg,#000103,45%,#1e2631,55%,#000103)] bg-[length:200%_100%] px-2 font-medium text-gray-400 transition-colors focus:outline-none focus:ring-2 focus:ring-offset-gray-50 hover:cursor-pointer text-xs">Elige este plan</button>
           </div>
           <div className={`text-xs ${active === "anual" ? "hidden" : ""}
           `}>O paga $64490/año y ahorra $24190</div>
         </div>
-        <div className="bg-black/80 hover:bg-black duration-600 border-3 rounded-3xl border-[#920000] w-[30%] h-72 text-white text-left p-5 flex flex-col justify-between">
+        <div className="bg-black/80 hover:bg-black duration-600 border-3 rounded-3xl border-[#0830c2] w-[30%] h-72 text-white text-left p-5 flex flex-col justify-between">
           <div className="text-xl">Estandar</div>
           <div className="text-xs p-3 flex flex-col gap-1">
             <div>2 Dispositivos a la vez.</div>
@@ -44,12 +44,12 @@ export const Promo = () => {
           </div>
           <div className="flex justify-between">
             <div className="font-extrabold">${active === "anual" ? "80490/año" : "9590/mes"}</div>
-            <button className="inline-flex h-8 animate-background-shine items-center justify-center rounded-md border border-[#920000] bg-[linear-gradient(110deg,#000103,45%,#1e2631,55%,#000103)] bg-[length:200%_100%] px-2 font-medium text-gray-400 transition-colors focus:outline-none focus:ring-2 focus:ring-offset-gray-50 hover:cursor-pointer text-xs">Elige este plan</button>
+            <button className="inline-flex h-8 animate-background-shine items-center justify-center rounded-md border border-[#0830c2] bg-[linear-gradient(110deg,#000103,45%,#1e2631,55%,#000103)] bg-[length:200%_100%] px-2 font-medium text-gray-400 transition-colors focus:outline-none focus:ring-2 focus:ring-offset-gray-50 hover:cursor-pointer text-xs">Elige este plan</button>
           </div>
           <div className={`text-xs ${active === "anual" ? "hidden" : ""}
           `}>O paga $80490/año y ahorra $34590</div>
         </div>
-        <div className="bg-black/80 hover:bg-black duration-600 border-3 rounded-3xl border-[#920000] w-[30%] h-72 text-white text-left p-5 flex flex-col justify-between">
+        <div className="bg-black/80 hover:bg-black duration-600 border-3 rounded-3xl border-[#0830c2] w-[30%] h-72 text-white text-left p-5 flex flex-col justify-between">
           <div className="text-xl">Platino</div>
           <div className="text-xs p-3 flex flex-col gap-1">
             <div className="">4 Dispositivos a la vez.</div>
@@ -59,7 +59,7 @@ export const Promo = () => {
           </div>
           <div className="flex justify-between">
             <div className="font-extrabold">${active === "anual" ? "95890/año" : "11490/mes"}</div>
-            <button className="inline-flex h-8 animate-background-shine items-center justify-center rounded-md border border-[#920000] bg-[linear-gradient(110deg,#000103,45%,#1e2631,55%,#000103)] bg-size-[200%_100%] px-2 font-medium text-gray-400 transition-colors focus:outline-none focus:ring-2 focus:ring-offset-gray-50 hover:cursor-pointer text-xs">Elige este plan</button>
+            <button className="inline-flex h-8 animate-background-shine items-center justify-center rounded-md border border-[#0830c2] bg-[linear-gradient(110deg,#000103,45%,#1e2631,55%,#000103)] bg-size-[200%_100%] px-2 font-medium text-gray-400 transition-colors focus:outline-none focus:ring-2 focus:ring-offset-gray-50 hover:cursor-pointer text-xs">Elige este plan</button>
           </div>
           <div className={`text-xs ${active === "anual" ? "hidden" : ""}
           `}>O paga $95890/año y ahorra $41990</div>

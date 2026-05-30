@@ -95,13 +95,13 @@ console.log(data);
         <p className="text-red-600 text-xs">{errors.password.message}</p>
       )}
       <div className="flex justify-around w-full">
-        <button type="submit" className="inline-flex h-10 animate-background-shine items-center justify-center rounded-md border border-red-800 bg-[linear-gradient(110deg,#000103,45%,#1e2631,55%,#000103)] bg-[length:200%_100%] px-6 font-medium text-gray-400 transition-colors focus:outline-none focus:ring-2  focus:ring-offset-gray-50 hover:cursor-pointer">
+        <button type="submit" className="inline-flex h-10 animate-background-shine items-center justify-center rounded-md border border-blue-800 bg-[linear-gradient(110deg,#000103,45%,#1e2631,55%,#000103)] bg-[length:200%_100%] px-6 font-medium text-gray-400 transition-colors focus:outline-none focus:ring-2  focus:ring-offset-gray-50 hover:cursor-pointer">
           Iniciar sesion
         </button>
       </div>
       <p className="text-gray-400 text-sm">
         ¿Eres nuevo?{" "}
-        <button className="hover:cursor-pointer text-red-600" onClick={handleLogin}>
+        <button className="hover:cursor-pointer text-blue-600" onClick={handleLogin}>
           Regístrate
         </button>
       </p>

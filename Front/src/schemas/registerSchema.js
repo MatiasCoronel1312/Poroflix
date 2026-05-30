@@ -1,19 +1,25 @@
 import { z } from "zod";
 
 export const registerSchema = z
-.object({
-  username: z
-    .string()
-    .min(3, "Mínimo 3 caracteres"),
+  .object({
+    username: z
+      .string()
+      .min(3, "Mínimo 3 caracteres"),
 
-  email: z
-    .email("Email inválido"),
+    email: z
+      .string()
+      .email("Email inválido"),
 
-  password: z
-    .string()
-    .min(6, "Mínimo 6 caracteres"),
-})
- .refine(
+    password: z
+      .string()
+      .min(6, "Mínimo 6 caracteres"),
+
+    confirmPassword: z
+      .string()
+      .min(6, "Mínimo 6 caracteres"),
+  })
+
+  .refine(
     (data) => data.password === data.confirmPassword,
     {
       message: "Las contraseñas no coinciden",

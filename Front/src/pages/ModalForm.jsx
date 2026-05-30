@@ -9,7 +9,7 @@ const ModalForm = ({ children }) => {
       onClick={handleOpenModal}
     >
       <div //modal container
-        className="relative bg-black opacity-90 rounded-3xl w-96 h-150 overflow-y-auto border-3 border-[#920000] p-3"
+        className="relative bg-black opacity-90 rounded-3xl w-96 h-150 overflow-y-auto border-3 border-[#0830c2] p-3"
         onClick={handleModalContainerClick}
       >
         {children}
