@@ -4,6 +4,7 @@ from flask import Flask , request, jsonify
 from flask_sqlalchemy import SQLAlchemy 
 from flask_cors import CORS
 from werkzeug.security import generate_password_hash , check_password_hash
+from flask_jwt_extended import JWTManager , create_access_token ,jwt_required, get_jwt_identity 
 
 load_dotenv()
 
@@ -12,9 +13,13 @@ app = Flask (__name__)
 CORS(app)
 
 app.config ["SQLALCHEMY_DATABASE_URI"] = os.getenv("DATABASE_URL")
-app.config ["SQLALCHEMY_MODIFICATIONS"] = False
+app.config ["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
+app.config["JWT_SECRET_KEY"] = os.getenv(
+    "JWT_SECRET_KEY"
+)
 
 db = SQLAlchemy (app)
+jwt = JWTManager(app)
 
 
 class Movie(db.Model):
@@ -73,10 +78,6 @@ class User(db.Model):
 #crea la DB
 with app.app_context():
     db.create_all()
-
-@app.route("/test")
-def test():
-    return "FUNCIONA"
 
 #Crear película
 @app.route("/movies", methods=["POST"])
@@ -157,6 +158,15 @@ def register():
         return jsonify({
             "error": "El email ya existe"
         }), 400
+    
+    existing_username = User.query.filter_by(
+        username=username
+    ).first()
+
+    if existing_username:
+        return jsonify({
+            "error":"El username ya existe"
+        }), 400
 
     hashed_password = generate_password_hash(
         password
@@ -199,11 +209,26 @@ def login():
         return jsonify({
             "error":"Contraseña incorrecta"
         }), 401
+    token = create_access_token(
+        identity=str(user.id)
+    )
 
     return jsonify({
-        "message":"Login correcto",
+        "token": token,
         "username": user.username
     })
+
+@app.route("/profile")
+@jwt_required()
+def profile():
+
+    user_id = get_jwt_identity()
+
+    user = User.query.get(user_id)
+
+    return jsonify(
+        user.to_dict()
+    )
 
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 5000))
