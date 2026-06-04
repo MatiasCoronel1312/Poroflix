@@ -16,6 +16,7 @@ app.config ["SQLALCHEMY_MODIFICATIONS"] = False
 
 db = SQLAlchemy (app)
 
+
 class Movie(db.Model):
     id = db.Column (db.Integer, primary_key=True)
     title= db.Column (db.String(100),nullable=False)
@@ -73,6 +74,9 @@ class User(db.Model):
 with app.app_context():
     db.create_all()
 
+@app.route("/test")
+def test():
+    return "FUNCIONA"
 
 #Crear película
 @app.route("/movies", methods=["POST"])
