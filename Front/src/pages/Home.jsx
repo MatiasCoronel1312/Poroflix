@@ -1,49 +1,40 @@
+import { useEffect, useState } from "react";
 import { Card } from "../components/Card";
+import { CarouselHome } from "@/components/CarouselHome";
 
 export const Home = () => {
-  const peliculas = [
-    {
-      id: 1,
-      tittle: "El padrino",
-      director: "Mario Puzo",
-      category: "Policial",
-      description: "Novela de un ciciliano traficante de alchol delaño 1900",
-      duration: "2:30",
-      img: "https://i.ytimg.com/vi/7oYYWtgBvAQ/hq720.jpg?sqp=-oaymwEXCNAFEJQDSFryq4qpAwkIARUAAIhCGAE=&rs=AOn4CLD_dZIDMXu-sOjttRqFRysNSDlIZA",
-    },
-     {
-      id:2,
-  tittle: "Star Wars: Episodio III - La Venganza de los Sith",
-  director: "George Lucas",
-  category: "Acción / Ciencia ficción",
-  description: "La historia muestra la caída de Anakin Skywalker hacia el lado oscuro de la Fuerza, su transformación en Darth Vader y el ascenso del Imperio Galáctico.",
-  duration: "2:20",
-  img: "https://i.ytimg.com/vi/jM3OQDfHpiY/hq720.jpg?sqp=-oaymwEmCKgBEF5IWvKriqkDGQgBFQAAiEIYAdgBAeIBCggYEAIYBjgBQAE=&rs=AOn4CLCCYCNQFNrsmVO9GaJqQyB7WNih4Q"},
-   {
-    id: 3,
-    tittle: " Gladiador",
-    director: "Ridley Scott ",
-    category: " Accion ",
-    description: "Gladiator narra la historia de Máximo, un general romano traicionado que se convierte en esclavo y gladiador para vengar la muerte de su familia y del emperador ",
-    duration: "1:14",
-    img: "https://i.ytimg.com/vi/pwv46gZgNl8/hq720.jpg?sqp=-oaymwEcCNAFEJQDSFXyq4qpAw4IARUAAIhCGAFwAcABBg==&rs=AOn4CLD3eo9ydvy_wx0houHKkzcmMWvIQQ"
-  } 
-
-  ];
+  const apiUrl = import.meta.env.VITE_API_URL;
+  const [movies, setMovies] = useState([]);
+  useEffect(() => {
+    fetch(`${apiUrl}/movies`)
+      .then((respuesta) => respuesta.json())
+      .then((datos) => {
+        setMovies(datos);
+      })
+      .catch((error) => {
+        console.log("error:", error,".env: ", apiUrl);
+      });
+  }, []);
 
   return (
-    <div className="w-full p-10 flex justify-between">
-      {peliculas.map((pelicula) => (
-        <Card
-          id={pelicula.id}
-          tittle={pelicula.tittle}
-          director={pelicula.director}
-          category={pelicula.category}
-          description={pelicula.description}
-          duration={pelicula.duration}
-          img={pelicula.img}
-        />
-      ))}
-    </div>
+    <main className="w-full">
+      <div className="w-full h-80 flex items-center justify-center pt-10">
+        <CarouselHome movies={movies} />
+      </div>
+      <div className="w-full py-10 flex flex-col md:grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 grid-rows-3 gap-4 justify-between">
+        {movies.map((pelicula) => (
+          <Card
+            id={pelicula.id}
+            key={pelicula.id}
+            title={pelicula.title}
+            director={pelicula.director}
+            category={pelicula.category}
+            description={pelicula.description}
+            duration={pelicula.duration}
+            img={pelicula.img}
+          />
+        ))}
+      </div>
+    </main>
   );
 };
