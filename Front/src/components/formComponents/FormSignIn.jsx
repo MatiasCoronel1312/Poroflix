@@ -22,28 +22,27 @@ const FormSignIn = ({ handleLogin }) => {
   } = useForm({
     resolver: zodResolver(registerSchema),
   });
-
+  const apiUrl = import.meta.env.VITE_API_URL;
   const onSubmit = async (data) => {
-    // try {
-    //   const response = await fetch(
-    //     "http://localhost:5000/register",
-    //     {
-    //       method: "POST",
-    //       headers: {
-    //         "Content-Type": "application/json",
-    //       },
-    //       body: JSON.stringify(data),
-    //     }
-    //   );
+    try {
+      const response = await fetch(
+        `${apiUrl}register`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(data),
+        }
+      );
 
-    //   const result = await response.json();
+      const result = await response.json();
 
-    //   console.log(result);
+      console.log(result);
 
-    // } catch (error) {
-    //   console.log(error);
-    // }
-    console.log(data);
+    } catch (error) {
+      console.log(error);
+    }
   };
   //------------------------------------------------------
 
