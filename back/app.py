@@ -3,7 +3,7 @@ from dotenv import load_dotenv
 from flask import Flask , request, jsonify 
 from flask_sqlalchemy import SQLAlchemy 
 from flask_cors import CORS
-from werkzeug.security import generate_password_hash
+from werkzeug.security import generate_password_hash , check_password_hash
 
 load_dotenv()
 
@@ -174,6 +174,36 @@ def register():
     return jsonify({
         "message": "Usuario registrado"
     }), 201
+
+@app.route("/login", methods=["POST"])
+def login():
+
+    data = request.json
+
+    email = data["email"]
+    password = data["password"]
+
+    user = User.query.filter_by(
+        email=email
+    ).first()
+
+    if not user:
+        return jsonify({
+            "error":"Usuario no encontrado"
+        }), 404
+
+    if not check_password_hash(
+        user.password,
+        password
+    ):
+        return jsonify({
+            "error":"Contraseña incorrecta"
+        }), 401
+
+    return jsonify({
+        "message":"Login correcto",
+        "username": user.username
+    })
 
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 5000))
