@@ -3,6 +3,9 @@ from dotenv import load_dotenv
 from flask import Flask , request, jsonify 
 from flask_sqlalchemy import SQLAlchemy 
 from flask_cors import CORS
+from werkzeug.security import generate_password_hash
+
+load_dotenv()
 
 app = Flask (__name__)
 
@@ -36,7 +39,36 @@ class Movie(db.Model):
             "img": self.img,
             "trailer": self.trailer
         }
-    
+
+class User(db.Model):
+    id = db.Column(
+        db.Integer,
+        primary_key=True
+    )
+
+    username = db.Column(
+        db.String(50),
+        unique=True,
+        nullable=False
+    )
+
+    email = db.Column(
+        db.String(100),
+        unique=True,
+        nullable=False
+    )
+
+    password = db.Column(
+        db.String(255),
+        nullable=False
+    )
+
+    def to_dict(self):
+        return {
+            "id": self.id,
+            "username": self.username,
+            "email": self.email
+        }  
 #crea la DB
 with app.app_context():
     db.create_all()
@@ -104,7 +136,45 @@ def delete_movie(id):
 
     return jsonify({"message": "Película eliminada"})
 
+@app.route("/register", methods=["POST"])
+def register():
+
+    data = request.json
+
+    username = data["username"]
+    email = data["email"]
+    password = data["password"]
+
+    existing_user = User.query.filter_by(
+        email=email
+    ).first()
+
+    if existing_user:
+        return jsonify({
+            "error": "El email ya existe"
+        }), 400
+
+    hashed_password = generate_password_hash(
+        password
+    )
+
+    user = User(
+        username=username,
+        email=email,
+        password=hashed_password
+    )
+
+    db.session.add(user)
+    db.session.commit()
+
+    return jsonify({
+        "message": "Usuario registrado"
+    }), 201
+
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 5000))
-    app.run(host="0.0.0.0", port=port)
-    app.run(debug=True)
+    app.run(
+        host="0.0.0.0",
+        port=port,
+        debug=True
+    )
