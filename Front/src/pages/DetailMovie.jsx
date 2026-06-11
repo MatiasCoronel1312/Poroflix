@@ -1,0 +1,65 @@
+import { useEffect, useState } from "react";
+import { useParams } from "react-router-dom";
+const apiUrl = import.meta.env.VITE_API_URL;
+
+export const DetailMovie = () => {
+  const [movie, setMovie] = useState({});
+  const { id } = useParams();
+  useEffect(() => {
+    fetch(`${apiUrl}/movies/${id}`)
+      .then((respuesta) => respuesta.json())
+      .then((dato) => {
+        setMovie(dato);
+      })
+      .catch((error) => {
+        console.log("error:", error);
+      });
+    window.scrollTo({
+      top: 0,
+      behavior: "smooth",
+    });
+  }, []);
+  return (
+    <div className="relative h-screen overflow-hidden">
+      <div
+        className="absolute inset-0 w-full h-screen flex justify-start gap-5 pt-10 bg-cover bg-center"
+        style={{
+          backgroundImage: `url(${movie.img})`,
+        }}
+      ></div>
+      <div className="absolute inset-0 bg-black/50" />
+      <div className="absolute inset-0 bg-linear-to-t from-black via-black/40 to-transparent" />
+      <div className="relative flex justify-between">
+        <div className="w-[50%] z-10 py-10 pl-1 text-white">
+          {/* <img className="p-3 rounded-4xl" src={movie.img}></img> */}
+          <iframe
+            width="560"
+            height="315"
+            className="rounded-4xl"
+            src={movie.trailer}
+            title="YouTube video player"
+            frameborder="0"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+            referrerpolicy="strict-origin-when-cross-origin"
+            allowfullscreen
+          ></iframe>
+          <div className="flex justify-around p-3">
+            <button className="inline-flex h-12 animate-background-shine items-center justify-center rounded-md border border-gray-800 bg-[linear-gradient(110deg,#000103,45%,#1e2631,55%,#000103)] bg-size-[200%_100%] px-6 font-medium text-gray-400 transition-colors focus:outline-none focus:ring-2  focus:ring-offset-gray-50 hover:cursor-pointer">
+              + Lista
+            </button>
+            <button className="inline-flex h-12 animate-background-shine items-center justify-center rounded-md border border-gray-800 bg-[linear-gradient(110deg,#000103,45%,#1e2631,55%,#000103)] bg-size-[200%_100%] px-6 font-medium text-gray-400 transition-colors focus:outline-none focus:ring-2 focus:ring-offset-gray-50 hover:cursor-pointer">
+              Reproducir
+            </button>
+          </div>
+        </div>
+        <div className="relative z-10 p-10 w-[50%] px-5 text-white">
+          <div className="text-2xl font-bold text-white">{movie.title}</div>
+          <p className="text-left">{movie.detail}</p>
+          <div className="text-left my-1.5">Director: {movie.director}</div>
+          <div className="text-left">Categoria: {movie.category}</div>
+          <div className="text-left my-1.5">Duracion: {movie.duration}min.</div>
+        </div>
+      </div>
+    </div>
+  );
+};
