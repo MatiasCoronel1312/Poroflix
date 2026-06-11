@@ -3,10 +3,14 @@ import { Logo } from "../Logo";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { registerSchema } from "../../schemas/registerSchema.js";
+import { useNavigate } from 'react-router-dom';
+import { useStore } from "@/components/contexts/store";
 
 const FormSignIn = ({ handleLogin }) => {
   const [password1, setPassword1] = useState(true);
   const [password2, setPassword2] = useState(true);
+  const navigate = useNavigate()
+  const handleOpenModal = useStore((state) => state.handleOpenModal);
 
   const handleChangeType1 = () => {
     setPassword1(!password1);
@@ -25,21 +29,22 @@ const FormSignIn = ({ handleLogin }) => {
   const apiUrl = import.meta.env.VITE_API_URL;
   const onSubmit = async (data) => {
     try {
-      const response = await fetch(
-        `${apiUrl}register`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(data),
-        }
-      );
+      const response = await fetch(`${apiUrl}register`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(data),
+      });
 
       const result = await response.json();
 
       console.log(result);
-
+      console.log(data);
+      localStorage.setItem("token", result.token);
+      localStorage.setItem("username", result.username);
+      navigate("/promo")
+      handleOpenModal()
     } catch (error) {
       console.log(error);
     }
@@ -86,7 +91,6 @@ const FormSignIn = ({ handleLogin }) => {
           name="password"
           placeholder="Contraseña"
           {...register("password")}
-
         />
         <div
           className="text-gray-400 absolute right-3 top-2.5 hover:cursor-pointer"
@@ -113,7 +117,6 @@ const FormSignIn = ({ handleLogin }) => {
           name="confirmPassword"
           placeholder="Confirmar Contraseña"
           {...register("confirmPassword")}
-
         />
         <div
           className="text-gray-400 absolute right-3 top-2.5 hover:cursor-pointer"
@@ -129,7 +132,9 @@ const FormSignIn = ({ handleLogin }) => {
           }
         </div>
       </div>
-      {errors.confirmPassword && <p className="text-red-600 text-xs">{errors.confirmPassword.message}</p>}
+      {errors.confirmPassword && (
+        <p className="text-red-600 text-xs">{errors.confirmPassword.message}</p>
+      )}
       <div className="flex justify-center w-full ">
         <button
           type="submit"

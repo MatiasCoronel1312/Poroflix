@@ -14,6 +14,10 @@ export const Home = () => {
       .catch((error) => {
         console.log("error:", error,".env: ", apiUrl);
       });
+    window.scrollTo({
+			top: 0,
+			behavior: 'smooth',
+		});
   }, []);
 
   return (

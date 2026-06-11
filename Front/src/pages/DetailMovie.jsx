@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-const apiUrl = import.meta.env.VITE_API_URL
-
+const apiUrl = import.meta.env.VITE_API_URL;
 
 export const DetailMovie = () => {
   const [movie, setMovie] = useState({});
@@ -15,6 +14,10 @@ export const DetailMovie = () => {
       .catch((error) => {
         console.log("error:", error);
       });
+    window.scrollTo({
+      top: 0,
+      behavior: "smooth",
+    });
   }, []);
   return (
     <div className="relative h-screen overflow-hidden">
