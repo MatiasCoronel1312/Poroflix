@@ -272,7 +272,8 @@ def create_subscription():
     db.session.commit()
 
     return jsonify({
-        "message":"Plan seleccionado"
+        "message":"Plan seleccionado",
+        "plan": data["plan"]
     })
 
 if __name__ == "__main__":
