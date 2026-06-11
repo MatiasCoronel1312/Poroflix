@@ -75,6 +75,25 @@ class User(db.Model):
             "username": self.username,
             "email": self.email
         }  
+class Subscription(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+
+    user_id = db.Column(
+        db.Integer,
+        db.ForeignKey("user.id"),
+        nullable=False
+    )
+
+    plan = db.Column(
+        db.String(20),
+        nullable=False
+    )
+
+    active = db.Column(
+        db.Boolean,
+        default=False
+    )
+
 #crea la DB
 with app.app_context():
     db.create_all()
@@ -235,6 +254,26 @@ def profile():
     return jsonify(
         user.to_dict()
     )
+
+@app.route("/subscription", methods=["POST"])
+@jwt_required()
+def create_subscription():
+
+    user_id = get_jwt_identity()
+
+    data = request.json
+
+    subscription = Subscription(
+        user_id=user_id,
+        plan=data["plan"]
+    )
+
+    db.session.add(subscription)
+    db.session.commit()
+
+    return jsonify({
+        "message":"Plan seleccionado"
+    })
 
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 5000))
