@@ -181,9 +181,15 @@ def register():
     db.session.add(user)
     db.session.commit()
 
+    token = create_access_token(
+       identity=str(user.id)
+    )
+
     return jsonify({
-        "message": "Usuario registrado"
-    }), 201
+        "message": "Usuario registrado",
+        "token": token,
+        "username": user.username
+    })
 
 @app.route("/login", methods=["POST"])
 def login():
