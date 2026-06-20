@@ -5,6 +5,7 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_cors import CORS
 from werkzeug.security import generate_password_hash , check_password_hash
 from flask_jwt_extended import JWTManager , create_access_token ,jwt_required, get_jwt_identity 
+from functools import wraps
 
 load_dotenv()
 
@@ -12,7 +13,11 @@ app = Flask (__name__)
 
 CORS(app)
 
-app.config ["SQLALCHEMY_DATABASE_URI"] = os.getenv("DATABASE_URL")
+database_url = os.getenv("DATABASE_URL")
+
+if database_url.startswith("postgres://"):
+    database_url = database_url.replace("postgres://", "postgresql://", 1)
+app.config["SQLALCHEMY_DATABASE_URI"] = database_url
 app.config ["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 app.config["JWT_SECRET_KEY"] = os.getenv(
     "JWT_SECRET_KEY"
@@ -20,8 +25,25 @@ app.config["JWT_SECRET_KEY"] = os.getenv(
 
 db = SQLAlchemy (app)
 jwt = JWTManager(app)
+def admin_required(func):
 
-
+    @wraps(func)
+    def wrapper(*args, **kwargs):
+        user_id = get_jwt_identity()
+        user = db.session.get(
+            User,
+            int(user_id)
+        )
+        if not user:
+            return jsonify({
+                "error":"Usuario no encontrado"
+            }),404
+        if user.role != "admin":
+            return jsonify({
+                "error":"Acceso denegado"
+            }),403
+        return func(*args, **kwargs)
+    return wrapper
 class Movie(db.Model):
     id = db.Column (db.Integer, primary_key=True)
     title= db.Column (db.String(100),nullable=False)
@@ -91,12 +113,18 @@ class User(db.Model):
         db.String(255),
         nullable=False
     )
+    role = db.Column(
+        db.String(20),
+        nullable=False,
+        default="user"
+    )
 
     def to_dict(self):
         return {
             "id": self.id,
             "username": self.username,
-            "email": self.email
+            "email": self.email,
+            "role": self.role
         }  
 class Subscription(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -123,6 +151,8 @@ with app.app_context():
 
 #Crear película
 @app.route("/movies", methods=["POST"])
+@jwt_required()
+@admin_required
 def create_movie():
     data = request.json
 
@@ -156,6 +186,8 @@ def get_movie(id):
 
 #Actualizar
 @app.route("/movies/<int:id>", methods=["PUT"])
+@jwt_required()
+@admin_required
 def update_movie(id):
     movie = Movie.query.get_or_404(id)
     data = request.json
@@ -175,6 +207,8 @@ def update_movie(id):
 
 #Eliminar
 @app.route("/movies/<int:id>", methods=["DELETE"])
+@jwt_required()
+@admin_required
 def delete_movie(id):
     movie = Movie.query.get_or_404(id)
 
@@ -184,6 +218,8 @@ def delete_movie(id):
     return jsonify({"message": "Película eliminada"})
 
 @app.route("/series", methods=["POST"])
+@jwt_required()
+@admin_required
 def create_series():
     data = request.json
     serie = Series(
@@ -221,52 +257,28 @@ def get_serie(id):
     )
 
 @app.route("/series/<int:id>", methods=["PUT"])
+@jwt_required()
+@admin_required
 def update_serie(id):
     serie = Series.query.get_or_404(id)
     data = request.json
-    serie.title = data.get(
-        "title",
-        serie.title
-    )
-    serie.creator = data.get(
-        "creator",
-        serie.creator
-    )
-    serie.category = data.get(
-        "category",
-        serie.category
-    )
-    serie.description = data.get(
-        "description",
-        serie.description
-    )
-    serie.detail = data.get(
-        "detail",
-        serie.detail
-    )
-    serie.seasons = data.get(
-        "seasons",
-        serie.seasons
-    )
-    serie.episodes = data.get(
-        "episodes",
-        serie.episodes
-    )
-    serie.img = data.get(
-        "img",
-        serie.img
-    )
-    serie.trailer = data.get(
-        "trailer",
-        serie.trailer
-    )
+    serie.title = data.get("title", serie.title)
+    serie.creator = data.get("creator", serie.creator)
+    serie.category = data.get("category", serie.category)
+    serie.description = data.get("description", serie.description)
+    serie.detail = data.get("detail", serie.detail)
+    serie.seasons = data.get("seasons", serie.seasons)
+    serie.episodes = data.get("episodes", serie.episodes)
+    serie.img = data.get("img", serie.img)
+    serie.trailer = data.get("trailer", serie.trailer)
     db.session.commit()
     return jsonify(
         serie.to_dict()
     )
 @app.route("/series/<int:id>", methods=["DELETE"])
+@jwt_required()
+@admin_required
 def delete_serie(id):
-
     serie = Series.query.get_or_404(id)
     db.session.delete(serie)
     db.session.commit()
@@ -308,7 +320,8 @@ def register():
     user = User(
         username=username,
         email=email,
-        password=hashed_password
+        password=hashed_password,
+        role="user"
     )
 
     db.session.add(user)
@@ -321,7 +334,8 @@ def register():
     return jsonify({
         "message": "Usuario registrado",
         "token": token,
-        "username": user.username
+        "username": user.username,
+        "role":user.role
     }),201
 
 @app.route("/login", methods=["POST"])
@@ -354,7 +368,8 @@ def login():
 
     return jsonify({
         "token": token,
-        "username": user.username
+        "username": user.username,
+        "role":user.role
     })
 
 @app.route("/profile")
@@ -362,8 +377,10 @@ def login():
 def profile():
 
     user_id = get_jwt_identity()
-
-    user = User.query.get(user_id)
+    user = db.session.get(
+        User,
+        int(user_id)
+    )
 
     return jsonify(
         user.to_dict()
@@ -388,6 +405,22 @@ def create_subscription():
     return jsonify({
         "message":"Plan seleccionado",
         "plan": data["plan"]
+    })
+
+@app.route("/make-admin/<int:id>")
+def make_admin(id):
+    user = db.session.get(
+        User,
+        id
+    )
+    if not user:
+        return jsonify({
+            "error":"Usuario no encontrado"
+        }),404
+    user.role = "admin"
+    db.session.commit()
+    return jsonify({
+        "message":"Administrador creado"
     })
 
 if __name__ == "__main__":
