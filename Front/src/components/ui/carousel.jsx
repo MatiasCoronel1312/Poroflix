@@ -108,12 +108,12 @@ function CarouselContent({
   return (
     <div
       ref={carouselRef}
-      className="overflow-hidden"
+      className="overflow-hidden relative"
       data-slot="carousel-content">
       <div
         className={cn(
           "flex",
-          orientation === "horizontal" ? "-ml-4" : "-mt-4 flex-col",
+          orientation === "horizontal" ? "-ml-1" : "-mt-1 flex-col",
           className
         )}
         {...props} />
@@ -134,7 +134,7 @@ function CarouselItem({
       data-slot="carousel-item"
       className={cn(
         "min-w-0 shrink-0 grow-0 basis-full",
-        orientation === "horizontal" ? "pl-4" : "pt-4",
+        orientation === "horizontal" ? "pl-1" : "pt-1",
         className
       )}
       {...props} />
@@ -154,8 +154,8 @@ function CarouselPrevious({
       data-slot="carousel-previous"
       variant={variant}
       size={size}
-      className={cn("absolute touch-manipulation rounded-full", orientation === "horizontal"
-        ? "top-1/2 -left-12 -translate-y-1/2"
+      className={cn("absolute touch-manipulation rounded-full z-20 bg-black/50 border-none text-white hover:bg-black/80 opacity-100 md:opacity-0 md:group-hover:opacity-100 transition-all duration-300 scale-90 md:group-hover:scale-100 hover:cursor-pointer", orientation === "horizontal"
+        ? "top-1/2 left-4 -translate-y-1/2"
         : "-top-12 left-1/2 -translate-x-1/2 rotate-90", className)}
       disabled={!canScrollPrev}
       onClick={scrollPrev}
@@ -179,8 +179,8 @@ function CarouselNext({
       data-slot="carousel-next"
       variant={variant}
       size={size}
-      className={cn("absolute touch-manipulation rounded-full", orientation === "horizontal"
-        ? "top-1/2 -right-12 -translate-y-1/2"
+      className={cn("absolute touch-manipulation rounded-full bg-black/50 border-none text-white hover:bg-black/80 opacity-100 md:opacity-0 md:group-hover:opacity-100 transition-all duration-300 scale-90 md:group-hover:scale-100 hover:cursor-pointer", orientation === "horizontal"
+        ? "top-1/2 right-4 -translate-y-1/2"
         : "-bottom-12 left-1/2 -translate-x-1/2 rotate-90", className)}
       disabled={!canScrollNext}
       onClick={scrollNext}

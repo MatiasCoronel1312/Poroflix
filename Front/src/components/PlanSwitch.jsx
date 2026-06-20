@@ -5,7 +5,7 @@ export const PlanSwitch = ({active, promoAnual, promoMensual}) => {
   return (
     <div className="flex justify-center items-center h-10 bg-black/0">
       <div className="relative flex bg-black/80 rounded-full p-1 w-96 h-10 justify-center items-center">
-        <div className="text-xs absolute -top-4 right-5">
+        <div className="text-xs absolute -top-4 right-5 text-white">
             Ahorra hasta 30%
         </div>
         <div
