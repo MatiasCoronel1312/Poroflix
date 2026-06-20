@@ -45,7 +45,30 @@ class Movie(db.Model):
             "img": self.img,
             "trailer": self.trailer
         }
-
+class Series(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    title = db.Column(db.String(100), nullable=False)
+    creator = db.Column(db.String(100))
+    category = db.Column(db.String(50))
+    description = db.Column(db.Text)
+    detail = db.Column(db.Text)
+    seasons = db.Column(db.Integer)
+    episodes = db.Column(db.Integer)
+    img = db.Column(db.String(200))
+    trailer = db.Column(db.String(200))
+    def to_dict(self):
+        return {
+            "id": self.id,
+            "title": self.title,
+            "creator": self.creator,
+            "category": self.category,
+            "description": self.description,
+            "detail": self.detail,
+            "seasons": self.seasons,
+            "episodes": self.episodes,
+            "img": self.img,
+            "trailer": self.trailer
+        }
 class User(db.Model):
     id = db.Column(
         db.Integer,
@@ -159,6 +182,96 @@ def delete_movie(id):
     db.session.commit()
 
     return jsonify({"message": "Película eliminada"})
+
+@app.route("/series", methods=["POST"])
+def create_series():
+    data = request.json
+    serie = Series(
+        title=data["title"],
+        creator=data.get("creator"),
+        category=data.get("category"),
+        description=data.get("description"),
+        detail=data.get("detail"),
+        seasons=data.get("seasons"),
+        episodes=data.get("episodes"),
+        img=data.get("img"),
+        trailer=data.get("trailer")
+    )
+    db.session.add(serie)
+    db.session.commit()
+    return jsonify(
+        serie.to_dict()
+    ), 201
+
+@app.route("/series", methods=["GET"])
+def get_series():
+    series = Series.query.all()
+    return jsonify([
+        s.to_dict()
+        for s in series
+    ])
+@app.route("/series/<int:id>", methods=["GET"])
+def get_serie(id):
+
+    serie = Series.query.get_or_404(id)
+
+    return jsonify(
+        serie.to_dict()
+    )
+
+@app.route("/series/<int:id>", methods=["PUT"])
+def update_serie(id):
+    serie = Series.query.get_or_404(id)
+    data = request.json
+    serie.title = data.get(
+        "title",
+        serie.title
+    )
+    serie.creator = data.get(
+        "creator",
+        serie.creator
+    )
+    serie.category = data.get(
+        "category",
+        serie.category
+    )
+    serie.description = data.get(
+        "description",
+        serie.description
+    )
+    serie.detail = data.get(
+        "detail",
+        serie.detail
+    )
+    serie.seasons = data.get(
+        "seasons",
+        serie.seasons
+    )
+    serie.episodes = data.get(
+        "episodes",
+        serie.episodes
+    )
+    serie.img = data.get(
+        "img",
+        serie.img
+    )
+    serie.trailer = data.get(
+        "trailer",
+        serie.trailer
+    )
+    db.session.commit()
+    return jsonify(
+        serie.to_dict()
+    )
+@app.route("/series/<int:id>", methods=["DELETE"])
+def delete_serie(id):
+
+    serie = Series.query.get_or_404(id)
+    db.session.delete(serie)
+    db.session.commit()
+    return jsonify({
+        "message":"Serie eliminada"
+    })
 
 @app.route("/register", methods=["POST"])
 def register():
