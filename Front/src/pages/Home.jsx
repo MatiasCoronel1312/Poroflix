@@ -24,9 +24,7 @@ export const Home = () => {
   return (
     <main className="w-full">
       <section className="w-full h-85 sm:h-80 md:h-112 flex items-center justify-center">
-        <div className="w-[85%] max-w-7xl px-4">
-          <CarouselHome movies={movies} />
-        </div>
+          <CarouselHome movies={movies} />  
       </section>
       <section className="max-w-7xl mx-auto px-4 pb-10">
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
