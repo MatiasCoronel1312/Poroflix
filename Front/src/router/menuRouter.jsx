@@ -3,6 +3,8 @@ import { DetailMovie } from "../pages/DetailMovie";
 import { Historial } from "../pages/Historial";
 import { Home } from "../pages/Home";
 import { Checkout } from "@/pages/Checkout";
+import Movies from "@/pages/Movies";
+import Series from "@/pages/Series";
 
 export const menuRouter = [
   {
@@ -29,5 +31,15 @@ export const menuRouter = [
   id: "checkout",
   path : "/checkout",
   Element : Checkout
+ },
+ {
+  id: "movies",
+  path : "/movies",
+  Element : Movies
+ },
+ {
+  id: "series",
+  path : "/series",
+  Element : Series
  }
 ];

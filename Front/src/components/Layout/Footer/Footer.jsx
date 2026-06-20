@@ -2,15 +2,12 @@ import React from 'react'
 
 const Footer = () => {
   return (
-    <footer className="bg-black text-white py-6 px-8 ">
+    <footer className="bg-black text-white py-6 px-8">
       <div className="container mx-auto flex flex-col md:flex-row justify-between items-center gap-4">
-        
-        {/* Izquierda: Derechos reservados */}
+
         <div className="text-sm font-light">
           © {new Date().getFullYear()} Todos los derechos reservados.
         </div>
-
-        {/* Derecha: Iconos de Redes Sociales */}
         <div className="flex gap-6 text-2xl">
           <a 
             href="https://facebook.com" 

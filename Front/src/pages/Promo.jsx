@@ -9,14 +9,50 @@ export const Promo = () => {
   const promoMensual = () => {
     setActive("mensual");
   };
+
   const promoAnual = () => {
     setActive("anual");
   };
 
+  const plans = [
+    {
+      nombre: "Basico",
+      titulo: "Básico con Anuncios",
+      mensual: "7390/mes",
+      anual: "64490/año",
+      ahorro: "$24190",
+      beneficios: ["2 Dispositivos a la vez.", "Resolución Full HD"],
+    },
+    {
+      nombre: "Estandar",
+      titulo: "Estandar",
+      mensual: "9590/mes",
+      anual: "80490/año",
+      ahorro: "$34590",
+      beneficios: [
+        "2 Dispositivos a la vez.",
+        "Resolución Full HD",
+        "30 Descargas para ver offline",
+      ],
+    },
+    {
+      nombre: "Platino",
+      titulo: "Platino",
+      mensual: "11490/mes",
+      anual: "95890/año",
+      ahorro: "$41990",
+      beneficios: [
+        "4 Dispositivos a la vez.",
+        "Resolución 4K Ultra HD*",
+        "Audio Dolby Atmos*",
+        "100 Descargas para disfrutar offline",
+      ],
+    },
+  ];
+
   const handlePlan = async (plan) => {
     try {
       const token = localStorage.getItem("token");
-
       const response = await fetch(
         `${import.meta.env.VITE_API_URL}subscription`,
         {
@@ -26,13 +62,12 @@ export const Promo = () => {
             Authorization: `Bearer ${token}`,
           },
           body: JSON.stringify({
-            plan: plan,
+            plan,
           }),
         },
       );
 
       const result = await response.json();
-
       if (response.ok) {
         localStorage.setItem("selectedPlan", result.plan);
         navigate("/checkout");
@@ -42,111 +77,59 @@ export const Promo = () => {
       console.log(error);
     }
   };
-
   return (
     <div
-      className="w-full h-screen flex flex-col justify-start gap-5 pt-10"
+      className="w-full min-h-screen flex flex-col gap-10 py-10 bg-cover bg-center"
       style={{
         backgroundImage: `url(${fondo})`,
       }}
     >
-      <div className="text-white text-4xl h-10">
+      <div className="flex justify-center px-4">
         <PlanSwitch
           active={active}
           promoMensual={promoMensual}
           promoAnual={promoAnual}
         />
       </div>
-      <div className="w-full px-5 flex justify-around">
-        <div className="bg-black/80 hover:bg-black duration-600 border-3 rounded-3xl border-[#0830c2] w-[30%] h-72 text-white text-left p-5 flex flex-col justify-between">
-          <div className="text-xl">Básico con Anuncios</div>
-          <div className="text-xs p-3 flex flex-col gap-1">
-            <div className="pb-2">2 Dispositivos a la vez.</div>
-            <div>Resolucion Full HD</div>
-          </div>
-          <div className="flex justify-between">
-            <div className="font-extrabold">
-              ${active === "anual" ? "64490/año" : "7390/mes"}
-            </div>
-            <button
-              className="inline-flex h-8 animate-background-shine items-center justify-center rounded-md border border-[#0830c2] bg-[linear-gradient(110deg,#000103,45%,#1e2631,55%,#000103)] bg-[length:200%_100%] px-2 font-medium text-gray-400 transition-colors focus:outline-none focus:ring-2 focus:ring-offset-gray-50 hover:cursor-pointer text-xs"
-              onClick={() => {
-                handlePlan(`Basico/${active}`);
-              }}
-            >
-              Elige este plan
-            </button>
-          </div>
+      <div className="max-w-7xl mx-auto w-full px-4 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {plans.map((plan) => (
           <div
-            className={`text-xs ${active === "anual" ? "hidden" : ""}
-          `}
-          >
-            O paga $64490/año y ahorra $24190
-          </div>
-        </div>
-        <div className="bg-black/80 hover:bg-black duration-600 border-3 rounded-3xl border-[#0830c2] w-[30%] h-72 text-white text-left p-5 flex flex-col justify-between">
-          <div className="text-xl">Estandar</div>
-          <div className="text-xs p-3 flex flex-col gap-1">
-            <div>2 Dispositivos a la vez.</div>
-            <div>Resolucion Full HD</div>
-            <div>30 Descargas para ver offline</div>
-          </div>
-          <div className="flex justify-between">
-            <div className="font-extrabold">
-              ${active === "anual" ? "80490/año" : "9590/mes"}
+            key={plan.nombre}
+            className="bg-black/80 hover:bg-black duration-300 border-3 border-[#0830c2] rounded-3xl w-full min-h-72 text-white text-left p-6 flex flex-col justify-between">
+            <div className="text-xl font-bold">{plan.titulo}</div>
+            <div className="text-sm py-4 flex flex-col gap-2">
+              {plan.beneficios.map((beneficio, index) => (
+                <div key={index}>{beneficio}</div>
+              ))}
             </div>
-            <button
-              className="inline-flex h-8 animate-background-shine items-center justify-center rounded-md border border-[#0830c2] bg-[linear-gradient(110deg,#000103,45%,#1e2631,55%,#000103)] bg-[length:200%_100%] px-2 font-medium text-gray-400 transition-colors focus:outline-none focus:ring-2 focus:ring-offset-gray-50 hover:cursor-pointer text-xs"
-              onClick={() => {
-                handlePlan(`Estandar/${active}`);
-              }}
-            >
-              Elige este plan
-            </button>
+            <div className="flex flex-col sm:flex-row gap-4 sm:justify-between sm:items-center">
+              <div className="font-extrabold text-lg">
+                ${active === "anual" ? plan.anual : plan.mensual}
+              </div>
+              <button
+                className="inline-flex h-8 animate-background-shine items-center justify-center rounded-md border border-[#0830c2] bg-[linear-gradient(110deg,#000103,45%,#1e2631,55%,#000103)] bg-size-[200%_100%] px-2 font-medium text-gray-400 transition-colors focus:outline-none focus:ring-2 focus:ring-offset-gray-50 hover:cursor-pointer text-xs"
+                onClick={() => handlePlan(`${plan.nombre}/${active}`)}
+              >
+                Elige este plan
+              </button>
+            </div>{active !== "anual" && (
+              <div className="text-xs mt-4">
+                O paga ${plan.anual}
+                {" y ahorra "}
+                {plan.ahorro}
+              </div>
+            )}
           </div>
-          <div
-            className={`text-xs ${active === "anual" ? "hidden" : ""}
-          `}
-          >
-            O paga $80490/año y ahorra $34590
-          </div>
-        </div>
-        <div className="bg-black/80 hover:bg-black duration-600 border-3 rounded-3xl border-[#0830c2] w-[30%] h-72 text-white text-left p-5 flex flex-col justify-between">
-          <div className="text-xl">Platino</div>
-          <div className="text-xs p-3 flex flex-col gap-1">
-            <div className="">4 Dispositivos a la vez.</div>
-            <div>Resolucion 4K Ultra HD*</div>
-            <div>Audio Dolby Atmos*</div>
-            <div>100 Descargas para disfrutar offline</div>
-          </div>
-          <div className="flex justify-between">
-            <div className="font-extrabold">
-              ${active === "anual" ? "95890/año" : "11490/mes"}
-            </div>
-            <button
-              className="inline-flex h-8 animate-background-shine items-center justify-center rounded-md border border-[#0830c2] bg-[linear-gradient(110deg,#000103,45%,#1e2631,55%,#000103)] bg-size-[200%_100%] px-2 font-medium text-gray-400 transition-colors focus:outline-none focus:ring-2 focus:ring-offset-gray-50 hover:cursor-pointer text-xs"
-              onClick={() => {
-                handlePlan(`Platino/${active}`);
-              }}
-            >
-              Elige este plan
-            </button>
-          </div>
-          <div
-            className={`text-xs ${active === "anual" ? "hidden" : ""}
-          `}
-          >
-            O paga $95890/año y ahorra $41990
-          </div>
-        </div>
+        ))}
       </div>
-      <p className="text-white text-xs p-3">
+      <p className="max-w-6xl mx-auto px-4 text-white text-xs md:text-sm leading-6">
         *Full HD, 4K Ultra HD y Dolby Atmos no están disponibles en todo el
         contenido de cada plan. El contenido en vivo en los planes Estándar y
         Platino puede contener publicidad. Las descargas pueden estar limitadas
-        de acuerdo con el tipo de contenido. Para más información,{" "}
-        <code>help.poroflix.com/plans</code>. Ahorro basado en un plan anual vs.
-        su versión mensual si es pagado por 12 meses. Requiere pago anticipado.
+        de acuerdo con el tipo de contenido. Para más información,
+        <code className="px-1">help.poroflix.com/plans</code>. Ahorro basado en
+        un plan anual vs su versión mensual si es pagado por 12 meses. Requiere
+        pago anticipado.
       </p>
     </div>
   );
