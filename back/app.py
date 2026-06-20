@@ -407,41 +407,6 @@ def create_subscription():
         "plan": data["plan"]
     })
 
-@app.route("/test-db")
-def test_db():
-
-    try:
-
-        db.session.execute(
-            db.text("SELECT 1")
-        )
-
-        return jsonify({
-            "message":"DB conectada"
-        })
-
-    except Exception as e:
-
-        return jsonify({
-            "error": str(e)
-        }),500
-
-@app.route("/make-admin/<int:id>")
-def make_admin(id):
-    user = db.session.get(
-        User,
-        id
-    )
-    if not user:
-        return jsonify({
-            "error":"Usuario no encontrado"
-        }),404
-    user.role = "admin"
-    db.session.commit()
-    return jsonify({
-        "message":"Administrador creado"
-    })
-
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 5000))
     app.run(
