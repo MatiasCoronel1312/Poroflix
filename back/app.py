@@ -210,6 +210,7 @@ def get_series():
         s.to_dict()
         for s in series
     ])
+
 @app.route("/series/<int:id>", methods=["GET"])
 def get_serie(id):
 
