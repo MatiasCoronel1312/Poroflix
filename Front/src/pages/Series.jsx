@@ -9,7 +9,7 @@ const Series = () => {
   const [genre, setGenre] = useState("Todos");
   const genres = ["Todos", ...new Set(series.map((item) => item.category))];
   useEffect(() => {
-    fetch(`${apiUrl}/series`)
+    fetch(`${apiUrl}series`)
       .then((respuesta) => respuesta.json())
       .then((datos) => setSeries(datos))
       .catch((error) => {
