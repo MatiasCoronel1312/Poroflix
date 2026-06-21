@@ -372,6 +372,19 @@ def login():
         "role":user.role
     })
 
+@app.route("/stats")
+@jwt_required()
+@admin_required
+def get_stats():
+    total_users = User.query.count()
+    total_movies = Movie.query.count()
+    total_series = Series.query.count()
+    return jsonify({
+        "users": total_users,
+        "movies": total_movies,
+        "series": total_series
+    })
+
 @app.route("/profile")
 @jwt_required()
 def profile():
