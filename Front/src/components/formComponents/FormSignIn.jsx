@@ -3,13 +3,13 @@ import { Logo } from "../Logo";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { registerSchema } from "../../schemas/registerSchema.js";
-import { useNavigate } from 'react-router-dom';
+import { useNavigate } from "react-router-dom";
 import { useStore } from "@/components/contexts/store";
 
 const FormSignIn = ({ handleLogin }) => {
   const [password1, setPassword1] = useState(true);
   const [password2, setPassword2] = useState(true);
-  const navigate = useNavigate()
+  const navigate = useNavigate();
   const handleOpenModal = useStore((state) => state.handleOpenModal);
 
   const handleChangeType1 = () => {
@@ -43,12 +43,14 @@ const FormSignIn = ({ handleLogin }) => {
       console.log(data);
       localStorage.setItem("token", result.token);
       localStorage.setItem("username", result.username);
-      navigate("/promo")
-      handleOpenModal()
+      localStorage.setItem("role", result.role);
+      navigate("/promo");
+      handleOpenModal();
     } catch (error) {
       console.log(error);
     }
   };
+  
   //------------------------------------------------------
 
   return (

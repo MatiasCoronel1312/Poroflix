@@ -5,6 +5,7 @@ import { Home } from "../pages/Home";
 import { Checkout } from "@/pages/Checkout";
 import Movies from "@/pages/Movies";
 import Series from "@/pages/Series";
+import AdminDashboard from "./AdminDashboard";
 
 export const menuRouter = [
   {
@@ -15,31 +16,37 @@ export const menuRouter = [
   {
     id: "historial",
     path: "/historial",
-    Element: Historial
+    Element: Historial,
   },
- {
-  id: "detailMovie",
-  path : "/pelicula/:id",
-  Element : DetailMovie
- },
- {
-  id: "promo",
-  path : "/promo",
-  Element : Promo
- },
- {
-  id: "checkout",
-  path : "/checkout",
-  Element : Checkout
- },
- {
-  id: "movies",
-  path : "/movies",
-  Element : Movies
- },
- {
-  id: "series",
-  path : "/series",
-  Element : Series
- }
+  {
+    id: "detailMovie",
+    path: "/pelicula/:id",
+    Element: DetailMovie,
+  },
+  {
+    id: "promo",
+    path: "/promo",
+    Element: Promo,
+  },
+  {
+    id: "checkout",
+    path: "/checkout",
+    Element: Checkout,
+  },
+  {
+    id: "movies",
+    path: "/movies",
+    Element: Movies,
+  },
+  {
+    id: "series",
+    path: "/series",
+    Element: Series,
+  },
+  {
+    id: "dashboard",
+    path: "/dashboard",
+    Element: AdminDashboard
+    ,
+  },
 ];

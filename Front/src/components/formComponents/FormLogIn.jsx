@@ -4,9 +4,12 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 
 import { loginSchema } from "../../schemas/loginSchema";
+import { useStore } from "@/components/contexts/store";
 
 const FormLogin = ({ handleLogin }) => {
   const [password, setPassword] = useState(true);
+  const handleOpenModal = useStore((state) => state.handleOpenModal);
+  const login = useStore((state) => state.login);
   const handleChangeType = () => {
     setPassword(!password);
   };
@@ -32,9 +35,8 @@ const FormLogin = ({ handleLogin }) => {
       const result = await response.json();
 
       if (response.ok) {
-       localStorage.setItem("token", result.token);
-       console.log(result);
-       
+        login(result);
+        handleOpenModal();
       } else {
         console.log(result.message);
       }
