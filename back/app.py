@@ -6,6 +6,7 @@ from flask_cors import CORS
 from werkzeug.security import generate_password_hash , check_password_hash
 from flask_jwt_extended import JWTManager , create_access_token ,jwt_required, get_jwt_identity 
 from functools import wraps
+from datetime import timedelta
 
 load_dotenv()
 
@@ -19,9 +20,8 @@ if database_url.startswith("postgres://"):
     database_url = database_url.replace("postgres://", "postgresql://", 1)
 app.config["SQLALCHEMY_DATABASE_URI"] = database_url
 app.config ["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
-app.config["JWT_SECRET_KEY"] = os.getenv(
-    "JWT_SECRET_KEY"
-)
+app.config["JWT_SECRET_KEY"] = os.getenv("JWT_SECRET_KEY")
+app.config["JWT_ACCESS_TOKEN_EXPIRES"] = timedelta(hours=24)
 
 db = SQLAlchemy (app)
 jwt = JWTManager(app)
