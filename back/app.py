@@ -372,6 +372,19 @@ def login():
         "role":user.role
     })
 
+@app.route("/stats")
+@jwt_required()
+@admin_required
+def get_stats():
+    total_users = User.query.count()
+    total_movies = Movie.query.count()
+    total_series = Series.query.count()
+    return jsonify({
+        "users": total_users,
+        "movies": total_movies,
+        "series": total_series
+    })
+
 @app.route("/profile")
 @jwt_required()
 def profile():
@@ -405,22 +418,6 @@ def create_subscription():
     return jsonify({
         "message":"Plan seleccionado",
         "plan": data["plan"]
-    })
-
-@app.route("/make-admin/<int:id>")
-def make_admin(id):
-    user = db.session.get(
-        User,
-        id
-    )
-    if not user:
-        return jsonify({
-            "error":"Usuario no encontrado"
-        }),404
-    user.role = "admin"
-    db.session.commit()
-    return jsonify({
-        "message":"Administrador creado"
     })
 
 if __name__ == "__main__":

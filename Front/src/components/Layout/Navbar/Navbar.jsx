@@ -9,6 +9,7 @@ export const Navbar = () => {
   const [menuOpen, setMenuOpen] = useState(false);
   const isOpenModal = useStore((state) => state.isOpenModal);
   const handleOpenModal = useStore((state) => state.handleOpenModal);
+  const role = useStore((state) => state.role);
 
   return (
     <header className="h-28 w-full font-extrabold">
@@ -16,6 +17,11 @@ export const Navbar = () => {
         <nav className="max-w-6xl mx-auto px-4 h-28 flex justify-between items-center text-white">
           <Logo />
           <div className="hidden md:flex items-center gap-8 text-xl">
+            {role === "admin" && (
+              <Link to="/dashboard" className="hover:text-gray-300 transition">
+                Dashboard
+              </Link>
+            )}
             <Link to="/movies" className="hover:text-gray-300 transition">
               Películas
             </Link>
@@ -28,10 +34,7 @@ export const Navbar = () => {
             <Link to="/" className="text-2xl">
               <i className="fa-solid fa-magnifying-glass"></i>
             </Link>
-            <button
-              onClick={handleOpenModal}
-              className="hover:cursor-pointer"
-            >
+            <button onClick={handleOpenModal} className="hover:cursor-pointer">
               <UserIcon />
             </button>
           </div>
@@ -42,16 +45,14 @@ export const Navbar = () => {
             <button onClick={handleOpenModal}>
               <UserIcon />
             </button>
-            <button
-              onClick={() => setMenuOpen(!menuOpen)}
-              className="text-2xl"
-            >
+            <button onClick={() => setMenuOpen(!menuOpen)} className="text-2xl">
               <i className="fa-solid fa-bars"></i>
             </button>
           </div>
         </nav>
         {menuOpen && (
           <div className="md:hidden flex flex-col items-center gap-6 py-6 text-white text-xl bg-black">
+            {role === "admin" && <Link to="/dashboard">Dashboard</Link>}
             <Link to="/movies" onClick={() => setMenuOpen(false)}>
               Películas
             </Link>
