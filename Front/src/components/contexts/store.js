@@ -33,6 +33,7 @@ export const useStore = create((set) => ({
     localStorage.removeItem("token");
     localStorage.removeItem("username");
     localStorage.removeItem("role");
+    localStorage.removeItem("selectedPlan");
 
     set({
       token: null,
@@ -40,5 +41,6 @@ export const useStore = create((set) => ({
       role: null,
       isAuthenticated: false,
     });
+    
   },
 }));

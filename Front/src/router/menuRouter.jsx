@@ -6,6 +6,8 @@ import { Checkout } from "@/pages/Checkout";
 import Movies from "@/pages/Movies";
 import Series from "@/pages/Series";
 import AdminDashboard from "./AdminDashboard";
+import UserMiLIsta from "./UserMiLIsta";
+import UserPerfil from "./UserPerfil";
 
 export const menuRouter = [
   {
@@ -47,6 +49,15 @@ export const menuRouter = [
     id: "dashboard",
     path: "/dashboard",
     Element: AdminDashboard
-    ,
   },
+  {
+    id: "milista",
+    path: "/milista",
+    Element: UserMiLIsta
+  },
+  {
+    id: "perfil",
+    path: "/perfil",
+    Element: UserPerfil
+  }
 ];
