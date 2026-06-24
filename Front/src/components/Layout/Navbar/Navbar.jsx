@@ -44,11 +44,7 @@ export const Navbar = () => {
             <Link to="/series" className="hover:text-gray-300 transition">
               Series
             </Link>
-            {isAuthenticated && (
-              <Link to="/milista" className="hover:text-gray-300 transition">
-                Mi lista
-              </Link>
-            )}
+           
             <Link to="/" className="text-2xl">
               <i className="fa-solid fa-magnifying-glass"></i>
             </Link>
@@ -79,11 +75,7 @@ export const Navbar = () => {
             <Link to="/series" onClick={() => setMenuOpen(false)}>
               Series
             </Link>
-            {isAuthenticated && (
-              <Link to="/milista" onClick={() => setMenuOpen(false)}>
-                Mi lista
-              </Link>
-            )}
+          
           </div>
         )}
       </div>

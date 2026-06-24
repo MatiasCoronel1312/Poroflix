@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-
 const apiUrl = import.meta.env.VITE_API_URL;
 
 export const DetailSerie = () => {
@@ -21,6 +20,25 @@ export const DetailSerie = () => {
       behavior: "smooth",
     });
   }, []);
+
+  const addToList = async (contentId) => {
+    const token = localStorage.getItem("token");
+    const response = await fetch(`${apiUrl}user-content`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+
+      body: JSON.stringify({
+        content_id: contentId,
+        content_type: "series",
+        action: "toggle_list",
+      }),
+    });
+    const data = await response.json();
+    console.log(data);
+  };
 
   return (
     <div className="relative min-h-screen overflow-hidden">
@@ -46,10 +64,15 @@ export const DetailSerie = () => {
               />
             </div>
             <div className="flex flex-wrap justify-center gap-4 mt-6">
-              <button className="inline-flex h-12 animate-background-shine items-center justify-center rounded-md border border-[#0830c2] bg-[linear-gradient(110deg,#000103,45%,#1e2631,55%,#000103)] bg-size-[200%_100%] px-5 font-medium text-gray-400 transition-colors focus:outline-none focus:ring-2 focus:ring-offset-gray-50 hover:cursor-pointer">
+              <button className="inline-flex h-12 animate-background-shine items-center justify-center rounded-md border border-[#0830c2] bg-[linear-gradient(110deg,#000103,45%,#1e2631,55%,#000103)] bg-size-[200%_100%] px-5 font-medium text-gray-400 transition-colors focus:outline-none focus:ring-2 focus:ring-offset-gray-50 hover:cursor-pointer" onClick={() => addToList(id)}>
                 + Lista
               </button>
-              <button className="inline-flex h-12 animate-background-shine items-center justify-center rounded-md border border-[#0830c2] bg-[linear-gradient(110deg,#000103,45%,#1e2631,55%,#000103)] bg-size-[200%_100%] px-5 font-medium text-gray-400 transition-colors focus:outline-none focus:ring-2 focus:ring-offset-gray-50 hover:cursor-pointer" onClick={()=>{navigate(`/play/serie/${id}`)}}>
+              <button
+                className="inline-flex h-12 animate-background-shine items-center justify-center rounded-md border border-[#0830c2] bg-[linear-gradient(110deg,#000103,45%,#1e2631,55%,#000103)] bg-size-[200%_100%] px-5 font-medium text-gray-400 transition-colors focus:outline-none focus:ring-2 focus:ring-offset-gray-50 hover:cursor-pointer"
+                onClick={() => {
+                  navigate(`/play/serie/${id}`);
+                }}
+              >
                 Reproducir
               </button>
             </div>
@@ -58,9 +81,7 @@ export const DetailSerie = () => {
             <h1 className="text-3xl md:text-5xl font-bold mb-6">
               {serie.title}
             </h1>
-            <p className="text-base md:text-lg leading-7">
-              {serie.detail}
-            </p>
+            <p className="text-base md:text-lg leading-7">{serie.detail}</p>
             <div className="mt-6 space-y-3 text-base md:text-lg">
               <div>
                 <span className="font-bold">Creador: </span>
@@ -82,7 +103,6 @@ export const DetailSerie = () => {
           </div>
         </div>
       </div>
-
     </div>
   );
 };
