@@ -145,6 +145,38 @@ class Subscription(db.Model):
         default=False
     )
 
+class UserContent(db.Model):
+
+    __tablename__ = "user_content"
+
+    id = db.Column(db.Integer, primary_key=True)
+
+    user_id = db.Column(
+        db.Integer,
+        db.ForeignKey("users.id"),
+        nullable=False
+    )
+
+    content_id = db.Column(
+        db.Integer,
+        nullable=False
+    )
+
+    content_type = db.Column(
+        db.String(20),
+        nullable=False
+    )
+
+    in_list = db.Column(
+        db.Boolean,
+        default=False
+    )
+
+    liked = db.Column(
+        db.Boolean,
+        nullable=True
+    )
+
 #crea la DB
 with app.app_context():
     db.create_all()
@@ -419,6 +451,92 @@ def create_subscription():
         "message":"Plan seleccionado",
         "plan": data["plan"]
     })
+
+
+
+@app.route("/user-content", methods=["GET"])
+@jwt_required()
+def get_user_content():
+
+    user_id = get_jwt_identity()
+    items = UserContent.query.filter_by(
+        user_id=user_id,
+        in_list=True
+    ).all()
+    result = []
+
+    for item in items:
+        if item.content_type == "movie":
+            movie = Movie.query.get(
+                item.content_id
+            )
+            if movie:
+                result.append({
+                    "id": movie.id,
+                    "title": movie.title,
+                    "description": movie.description,
+                    "img": movie.img,
+                    "type": "movie",
+                    "liked": item.liked
+                })
+
+        elif item.content_type == "series":
+            serie = Series.query.get(
+                item.content_id
+            )
+            if serie:
+                result.append({
+                    "id": serie.id,
+                    "title": serie.title,
+                    "description": serie.description,
+                    "img": serie.img,
+                    "type": "series",
+                    "liked": item.liked
+                })
+    return result, 200
+
+@app.route("/user-content", methods=["PUT"])
+@jwt_required()
+def update_user_content():
+
+    user_id = get_jwt_identity()
+    data = request.get_json()
+    content_id = data["content_id"]
+    content_type = data["content_type"]
+    action = data["action"]
+    item = UserContent.query.filter_by(
+        user_id=user_id,
+        content_id=content_id,
+        content_type=content_type
+    ).first()
+
+    if not item:
+        item = UserContent(
+            user_id=user_id,
+            content_id=content_id,
+            content_type=content_type
+        )
+        db.session.add(item)
+
+    if action == "toggle_list":
+        item.in_list = not item.in_list
+    if action == "like":
+        item.liked = (
+            None
+            if item.liked is True
+            else True
+        )
+    elif action == "dislike":
+        item.liked = (
+            None
+            if item.liked is False
+            else False
+        )
+    db.session.commit()
+
+    return {"msg": "Actualizado"}
+
+
 
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 5000))
