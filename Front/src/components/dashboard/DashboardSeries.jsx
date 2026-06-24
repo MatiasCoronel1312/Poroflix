@@ -66,7 +66,7 @@ const DashboardSeries = ({ refreshStats }) => {
     return (
       <div className="border border-blue-700 rounded-3xl p-8">
         <div className="flex justify-center">
-          <h2 className="text-3xl font-bold mb-6 px-5 py-2">Películas</h2>
+          <h2 className="text-3xl font-bold mb-6 px-5 py-2">Series</h2>
           <button
             className="bg-blue-700 px-5 py-2 rounded-xl hover:cursor-pointer"
             onClick={() => {

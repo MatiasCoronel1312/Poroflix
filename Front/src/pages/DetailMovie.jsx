@@ -1,3 +1,4 @@
+import { useStore } from "@/components/contexts/store";
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 
@@ -7,6 +8,8 @@ export const DetailMovie = () => {
   const [movie, setMovie] = useState({});
   const navigate = useNavigate();
   const { id } = useParams();
+  const token = localStorage.getItem("token");
+  const handleOpenModal = useStore((state) => state.handleOpenModal);
 
   useEffect(() => {
     fetch(`${apiUrl}/movies/${id}`)
@@ -23,7 +26,6 @@ export const DetailMovie = () => {
   }, []);
 
   const addToList = async (contentId) => {
-    const token = localStorage.getItem("token");
     const response = await fetch(`${apiUrl}user-content`, {
       method: "PUT",
       headers: {
@@ -39,6 +41,23 @@ export const DetailMovie = () => {
     });
     const data = await response.json();
     console.log(data);
+  };
+
+  const handleAddToList = (id) => {
+    if (!token) {
+      handleOpenModal();
+      navigate("/");
+      return;
+    }
+    addToList(id);
+  };
+  const handlePlay = (id) => {
+    if (!token) {
+      handleOpenModal();
+      navigate("/");
+      return;
+    }
+    navigate(`/play/movie/${id}`);
   };
 
   return (
@@ -65,17 +84,25 @@ export const DetailMovie = () => {
               />
             </div>
             <div className="flex flex-wrap justify-center gap-4 mt-6">
-              <button className="inline-flex h-12 animate-background-shine items-center justify-center rounded-md border border-[#0830c2] bg-[linear-gradient(110deg,#000103,45%,#1e2631,55%,#000103)] bg-size-[200%_100%] px-5 font-medium text-gray-400 transition-colors focus:outline-none focus:ring-2 focus:ring-offset-gray-50 hover:cursor-pointer" onClick={() => addToList(id)}>
+              <button
+                className="inline-flex h-12 animate-background-shine items-center justify-center rounded-md border border-[#0830c2] bg-[linear-gradient(110deg,#000103,45%,#1e2631,55%,#000103)] bg-size-[200%_100%] px-5 font-medium text-gray-400 transition-colors focus:outline-none focus:ring-2 focus:ring-offset-gray-50 hover:cursor-pointer"
+                onClick={() => handleAddToList(id)}
+              >
                 + Lista
               </button>
               <button
                 className="inline-flex h-12 animate-background-shine items-center justify-center rounded-md border border-[#0830c2] bg-[linear-gradient(110deg,#000103,45%,#1e2631,55%,#000103)] bg-size-[200%_100%] px-5 font-medium text-gray-400 transition-colors focus:outline-none focus:ring-2 focus:ring-offset-gray-50 hover:cursor-pointer"
                 onClick={() => {
-                  navigate(`/play/movie/${id}`);
+                  handlePlay(id);
                 }}
               >
                 Reproducir
               </button>
+
+              <i class="fa-solid fa-thumbs-up inline-flex h-12 animate-background-shine items-center justify-center rounded-md border border-[#0830c2] bg-[linear-gradient(110deg,#000103,45%,#1e2631,55%,#000103)] bg-size-[200%_100%] px-5 font-medium text-gray-400 transition-colors focus:outline-none focus:ring-2 focus:ring-offset-gray-50 hover:cursor-pointer text-xl p-2.5"></i>
+              <i class="fa-regular fa-thumbs-up inline-flex h-12 animate-background-shine items-center justify-center rounded-md border border-[#0830c2] bg-[linear-gradient(110deg,#000103,45%,#1e2631,55%,#000103)] bg-size-[200%_100%] px-5 font-medium text-gray-400 transition-colors focus:outline-none focus:ring-2 focus:ring-offset-gray-50 hover:cursor-pointer text-xl p-2.5"></i>
+              <i class="fa-solid fa-thumbs-down inline-flex h-12 animate-background-shine items-center justify-center rounded-md border border-[#0830c2] bg-[linear-gradient(110deg,#000103,45%,#1e2631,55%,#000103)] bg-size-[200%_100%] px-5 font-medium text-gray-400 transition-colors focus:outline-none focus:ring-2 focus:ring-offset-gray-50 hover:cursor-pointer text-xl p-2.5"></i>
+              <i class="fa-regular fa-thumbs-down inline-flex h-12 animate-background-shine items-center justify-center rounded-md border border-[#0830c2] bg-[linear-gradient(110deg,#000103,45%,#1e2631,55%,#000103)] bg-size-[200%_100%] px-5 font-medium text-gray-400 transition-colors focus:outline-none focus:ring-2 focus:ring-offset-gray-50 hover:cursor-pointer text-xl p-2.5"></i>
             </div>
           </div>
           <div className="w-full lg:w-1/2 text-white">
