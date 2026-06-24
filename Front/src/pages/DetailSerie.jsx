@@ -1,11 +1,11 @@
 import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 
 const apiUrl = import.meta.env.VITE_API_URL;
 
 export const DetailSerie = () => {
   const [serie, setSerie] = useState({});
-
+  const navigate = useNavigate();
   const { id } = useParams();
 
   useEffect(() => {
@@ -49,7 +49,7 @@ export const DetailSerie = () => {
               <button className="inline-flex h-12 animate-background-shine items-center justify-center rounded-md border border-[#0830c2] bg-[linear-gradient(110deg,#000103,45%,#1e2631,55%,#000103)] bg-size-[200%_100%] px-5 font-medium text-gray-400 transition-colors focus:outline-none focus:ring-2 focus:ring-offset-gray-50 hover:cursor-pointer">
                 + Lista
               </button>
-              <button className="inline-flex h-12 animate-background-shine items-center justify-center rounded-md border border-[#0830c2] bg-[linear-gradient(110deg,#000103,45%,#1e2631,55%,#000103)] bg-size-[200%_100%] px-5 font-medium text-gray-400 transition-colors focus:outline-none focus:ring-2 focus:ring-offset-gray-50 hover:cursor-pointer">
+              <button className="inline-flex h-12 animate-background-shine items-center justify-center rounded-md border border-[#0830c2] bg-[linear-gradient(110deg,#000103,45%,#1e2631,55%,#000103)] bg-size-[200%_100%] px-5 font-medium text-gray-400 transition-colors focus:outline-none focus:ring-2 focus:ring-offset-gray-50 hover:cursor-pointer" onClick={()=>{navigate(`/play/serie/${id}`)}}>
                 Reproducir
               </button>
             </div>
@@ -63,16 +63,20 @@ export const DetailSerie = () => {
             </p>
             <div className="mt-6 space-y-3 text-base md:text-lg">
               <div>
-                <span className="font-bold">Director:</span>
-                {serie.director}
+                <span className="font-bold">Creador: </span>
+                {serie.creator}
               </div>
               <div>
-                <span className="font-bold">Categoría:</span>
+                <span className="font-bold">Categoría: </span>
                 {serie.category}
               </div>
               <div>
-                <span className="font-bold">Duración:</span>
-                {serie.duration} min
+                <span className="font-bold">Temporada: </span>
+                {serie.seasons}
+              </div>
+              <div>
+                <span className="font-bold">Episodios: </span>
+                {serie.episodes}
               </div>
             </div>
           </div>

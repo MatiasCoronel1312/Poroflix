@@ -9,6 +9,7 @@ import Series from "@/pages/Series";
 import AdminDashboard from "./AdminDashboard";
 import UserMiLIsta from "./UserMiLIsta";
 import UserPerfil from "./UserPerfil";
+import PlayRoute from "./PlayRoute";
 
 export const menuRouter = [
   {
@@ -67,5 +68,10 @@ export const menuRouter = [
     id: "perfil",
     path: "/perfil",
     Element: UserPerfil
+  },
+  {
+    id: "play",
+    path: "/play/:type/:id",
+    Element: PlayRoute
   }
 ];

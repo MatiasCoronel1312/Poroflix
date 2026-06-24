@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 
-export const CardSerie = ({id,title,director,category,description,duration,img}) => {
+export const CardSerie = ({id,title,category, description,img}) => {
 
   return (
     <Link to= {`/serie/${id}`}> 
@@ -12,9 +12,9 @@ export const CardSerie = ({id,title,director,category,description,duration,img})
         <div className='h-[50%] mt-1 flex flex-col text-left pt-3'>
             <div className='flex justify-between'>
                 <div className='text-[15px]  truncate'>{title}</div>
-                <div className='text-[12px]'>{duration}</div>
+                
             </div>
-            <div className='text-[12px]'>{director}</div>
+            <div className='text-[12px]'>{category}</div>
             <p className='text-[12px] line-clamp-1'>{description}</p>
         </div>
     </div>
