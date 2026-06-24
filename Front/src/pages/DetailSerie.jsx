@@ -57,7 +57,7 @@ export const DetailSerie = () => {
       navigate("/");
       return;
     }
-    navigate(`/play/series/${id}`);
+    navigate(`/play/serie/${id}`);
   };
 
   return (
