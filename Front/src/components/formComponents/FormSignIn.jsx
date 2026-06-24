@@ -11,6 +11,7 @@ const FormSignIn = ({ handleLogin }) => {
   const [password2, setPassword2] = useState(true);
   const navigate = useNavigate();
   const handleOpenModal = useStore((state) => state.handleOpenModal);
+  const login = useStore((state) => state.login);
 
   const handleChangeType1 = () => {
     setPassword1(!password1);
@@ -39,8 +40,7 @@ const FormSignIn = ({ handleLogin }) => {
 
       const result = await response.json();
 
-      console.log(result);
-      console.log(data);
+      login(result);
       localStorage.setItem("token", result.token);
       localStorage.setItem("username", result.username);
       localStorage.setItem("role", result.role);
@@ -50,7 +50,7 @@ const FormSignIn = ({ handleLogin }) => {
       console.log(error);
     }
   };
-  
+
   //------------------------------------------------------
 
   return (

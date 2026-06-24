@@ -3,12 +3,14 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { checkoutSchema } from "../schemas/checkoutSchema";
 import { useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
+import { useStore } from "@/components/contexts/store";
 
 export const Checkout = () => {
 
   const navigate = useNavigate();
   const [importe, setImporte] = useState(0)
   const [plan, setPlan] = useState("")
+  const isAuthenticated = useStore((state) => state.isAuthenticated);
   useEffect(() => {
     setPlan(localStorage.getItem("selectedPlan"))
     window.scrollTo({

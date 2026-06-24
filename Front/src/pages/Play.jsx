@@ -20,7 +20,6 @@ const Play = ({ type, id }) => {
 
       const data = await response.json();
       setItem(data);
-      console.log(data);
     };
 
     fetchData();
