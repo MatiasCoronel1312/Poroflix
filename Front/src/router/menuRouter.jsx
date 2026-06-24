@@ -1,5 +1,6 @@
 import { Promo } from "@/pages/Promo";
 import { DetailMovie } from "../pages/DetailMovie";
+import { DetailSerie } from "../pages/DetailSerie";
 import { Historial } from "../pages/Historial";
 import { Home } from "../pages/Home";
 import { Checkout } from "@/pages/Checkout";
@@ -25,6 +26,13 @@ export const menuRouter = [
     path: "/pelicula/:id",
     Element: DetailMovie,
   },
+  
+  {
+    id: "detailSerie",
+    path: "/serie/:id",
+    Element: DetailSerie,
+  },
+
   {
     id: "promo",
     path: "/promo",
