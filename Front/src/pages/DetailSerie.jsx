@@ -4,8 +4,8 @@ import { useNavigate, useParams } from "react-router-dom";
 
 const apiUrl = import.meta.env.VITE_API_URL;
 
-export const DetailMovie = () => {
-  const [movie, setMovie] = useState({});
+export const DetailSerie = () => {
+  const [serie, setSerie] = useState({});
   const [liked, setLiked] = useState(null);
   const [inList, setInList] = useState(false);
   const navigate = useNavigate();
@@ -16,9 +16,9 @@ export const DetailMovie = () => {
     "inline-flex h-12 animate-background-shine items-center justify-center rounded-md border border-[#0830c2] bg-[linear-gradient(110deg,#000103,45%,#1e2631,55%,#000103)] bg-size-[200%_100%] px-5 font-medium text-gray-400 transition-colors focus:outline-none focus:ring-2 focus:ring-offset-gray-50 hover:cursor-pointer";
 
   useEffect(() => {
-    fetch(`${apiUrl}/movies/${id}`)
+    fetch(`${apiUrl}/series/${id}`)
       .then((respuesta) => respuesta.json())
-      .then((dato) => setMovie(dato))
+      .then((dato) => setSerie(dato))
       .catch((error) => {
         console.log("error:", error);
       });
@@ -44,7 +44,7 @@ export const DetailMovie = () => {
       }
       const data = await response.json();
       const currentContent = data.find(
-        (item) => item.id === Number(id) && item.type === "movie",
+        (item) => item.id === Number(id) && item.type === "series",
       );
       setLiked(currentContent?.liked ?? null);
       setInList(currentContent?.in_list ?? false);
@@ -63,14 +63,13 @@ export const DetailMovie = () => {
 
       body: JSON.stringify({
         content_id: contentId,
-        content_type: "movie",
+        content_type: "series",
         action: "toggle_list",
       }),
     });
     const data = await response.json();
     setInList(data.in_list);
   };
-
   const updateUserContent = async (contentId, action) => {
     const response = await fetch(`${apiUrl}user-content`, {
       method: "PUT",
@@ -81,14 +80,13 @@ export const DetailMovie = () => {
 
       body: JSON.stringify({
         content_id: contentId,
-        content_type: "movie",
+        content_type: "series",
         action,
       }),
     });
     const data = await response.json();
     setLiked(data.liked);
   };
-
   const handleLike = async () => {
     if (!token) {
       handleOpenModal();
@@ -120,7 +118,7 @@ export const DetailMovie = () => {
       navigate("/");
       return;
     }
-    navigate(`/play/movie/${id}`);
+    navigate(`/play/serie/${id}`);
   };
 
   return (
@@ -128,7 +126,7 @@ export const DetailMovie = () => {
       <div
         className="absolute inset-0 bg-cover bg-center"
         style={{
-          backgroundImage: `url(${movie.img})`,
+          backgroundImage: `url(${serie.img})`,
         }}
       />
       <div className="absolute inset-0 bg-black/60" />
@@ -139,7 +137,7 @@ export const DetailMovie = () => {
             <div className="aspect-video w-full overflow-hidden rounded-3xl">
               <iframe
                 className="w-full h-full"
-                src={movie.trailer}
+                src={serie.trailer}
                 title="Trailer"
                 allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
                 referrerPolicy="strict-origin-when-cross-origin"
@@ -188,21 +186,25 @@ export const DetailMovie = () => {
           </div>
           <div className="w-full lg:w-1/2 text-white">
             <h1 className="text-3xl md:text-5xl font-bold mb-6">
-              {movie.title}
+              {serie.title}
             </h1>
-            <p className="text-base md:text-lg leading-7">{movie.detail}</p>
+            <p className="text-base md:text-lg leading-7">{serie.detail}</p>
             <div className="mt-6 space-y-3 text-base md:text-lg">
               <div>
-                <span className="font-bold">Director:</span>
-                {movie.director}
+                <span className="font-bold">Creador: </span>
+                {serie.creator}
               </div>
               <div>
-                <span className="font-bold">Categoría:</span>
-                {movie.category}
+                <span className="font-bold">Categoría: </span>
+                {serie.category}
               </div>
               <div>
-                <span className="font-bold">Duración:</span>
-                {movie.duration} min
+                <span className="font-bold">Temporada: </span>
+                {serie.seasons}
+              </div>
+              <div>
+                <span className="font-bold">Episodios: </span>
+                {serie.episodes}
               </div>
             </div>
           </div>

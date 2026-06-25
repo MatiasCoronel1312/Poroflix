@@ -1,6 +1,6 @@
 import React from "react";
 import { useEffect, useState } from "react";
-import { Card } from "../components/Card";
+import { CardSerie } from "../components/CardSerie";
 
 const Series = () => {
   const apiUrl = import.meta.env.VITE_API_URL;
@@ -9,7 +9,7 @@ const Series = () => {
   const [genre, setGenre] = useState("Todos");
   const genres = ["Todos", ...new Set(series.map((item) => item.category))];
   useEffect(() => {
-    fetch(`${apiUrl}/series`)
+    fetch(`${apiUrl}series`)
       .then((respuesta) => respuesta.json())
       .then((datos) => setSeries(datos))
       .catch((error) => {
@@ -42,7 +42,7 @@ const Series = () => {
       <section className="max-w-7xl mx-auto px-4 pb-10">
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
           {filteredSeries.map((serie) => (
-            <Card
+            <CardSerie
               key={serie.id}
               id={serie.id}
               title={serie.title}

@@ -117,11 +117,26 @@
   }
 }
 
+
+
 body {
   margin: 0;
   background-color: #101010;
   font-family: Montserrat;
+
+  background-image:linear-gradient(rgba(0,0,0,0.6),rgba(0,0,0,0.6)),url("assets/fondo.png");
+  background-size: cover;
+  background-repeat: repeat;
 }
+
+footer {
+  width: 100vw;
+  position: relative;
+  left: 50%;
+  transform: translateX(-50%)
+}
+
+
 
 #root {
   width: 1126px;

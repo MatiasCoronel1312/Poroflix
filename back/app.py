@@ -5,6 +5,8 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_cors import CORS
 from werkzeug.security import generate_password_hash , check_password_hash
 from flask_jwt_extended import JWTManager , create_access_token ,jwt_required, get_jwt_identity 
+from functools import wraps
+from datetime import timedelta
 
 load_dotenv()
 
@@ -12,16 +14,36 @@ app = Flask (__name__)
 
 CORS(app)
 
-app.config ["SQLALCHEMY_DATABASE_URI"] = os.getenv("DATABASE_URL")
+database_url = os.getenv("DATABASE_URL")
+
+if database_url.startswith("postgres://"):
+    database_url = database_url.replace("postgres://", "postgresql://", 1)
+app.config["SQLALCHEMY_DATABASE_URI"] = database_url
 app.config ["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
-app.config["JWT_SECRET_KEY"] = os.getenv(
-    "JWT_SECRET_KEY"
-)
+app.config["JWT_SECRET_KEY"] = os.getenv("JWT_SECRET_KEY")
+app.config["JWT_ACCESS_TOKEN_EXPIRES"] = timedelta(hours=24)
 
 db = SQLAlchemy (app)
 jwt = JWTManager(app)
+def admin_required(func):
 
-
+    @wraps(func)
+    def wrapper(*args, **kwargs):
+        user_id = get_jwt_identity()
+        user = db.session.get(
+            User,
+            int(user_id)
+        )
+        if not user:
+            return jsonify({
+                "error":"Usuario no encontrado"
+            }),404
+        if user.role != "admin":
+            return jsonify({
+                "error":"Acceso denegado"
+            }),403
+        return func(*args, **kwargs)
+    return wrapper
 class Movie(db.Model):
     id = db.Column (db.Integer, primary_key=True)
     title= db.Column (db.String(100),nullable=False)
@@ -91,12 +113,18 @@ class User(db.Model):
         db.String(255),
         nullable=False
     )
+    role = db.Column(
+        db.String(20),
+        nullable=False,
+        default="user"
+    )
 
     def to_dict(self):
         return {
             "id": self.id,
             "username": self.username,
-            "email": self.email
+            "email": self.email,
+            "role": self.role
         }  
 class Subscription(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -117,12 +145,46 @@ class Subscription(db.Model):
         default=False
     )
 
+class UserContent(db.Model):
+
+    __tablename__ = "user_content"
+
+    id = db.Column(db.Integer, primary_key=True)
+
+    user_id = db.Column(
+        db.Integer,
+        db.ForeignKey("user.id"),
+        nullable=False
+    )
+
+    content_id = db.Column(
+        db.Integer,
+        nullable=False
+    )
+
+    content_type = db.Column(
+        db.String(20),
+        nullable=False
+    )
+
+    in_list = db.Column(
+        db.Boolean,
+        default=False
+    )
+
+    liked = db.Column(
+        db.Boolean,
+        nullable=True
+    )
+
 #crea la DB
 with app.app_context():
     db.create_all()
 
 #Crear película
 @app.route("/movies", methods=["POST"])
+@jwt_required()
+@admin_required
 def create_movie():
     data = request.json
 
@@ -156,6 +218,8 @@ def get_movie(id):
 
 #Actualizar
 @app.route("/movies/<int:id>", methods=["PUT"])
+@jwt_required()
+@admin_required
 def update_movie(id):
     movie = Movie.query.get_or_404(id)
     data = request.json
@@ -175,6 +239,8 @@ def update_movie(id):
 
 #Eliminar
 @app.route("/movies/<int:id>", methods=["DELETE"])
+@jwt_required()
+@admin_required
 def delete_movie(id):
     movie = Movie.query.get_or_404(id)
 
@@ -184,6 +250,8 @@ def delete_movie(id):
     return jsonify({"message": "Película eliminada"})
 
 @app.route("/series", methods=["POST"])
+@jwt_required()
+@admin_required
 def create_series():
     data = request.json
     serie = Series(
@@ -221,52 +289,28 @@ def get_serie(id):
     )
 
 @app.route("/series/<int:id>", methods=["PUT"])
+@jwt_required()
+@admin_required
 def update_serie(id):
     serie = Series.query.get_or_404(id)
     data = request.json
-    serie.title = data.get(
-        "title",
-        serie.title
-    )
-    serie.creator = data.get(
-        "creator",
-        serie.creator
-    )
-    serie.category = data.get(
-        "category",
-        serie.category
-    )
-    serie.description = data.get(
-        "description",
-        serie.description
-    )
-    serie.detail = data.get(
-        "detail",
-        serie.detail
-    )
-    serie.seasons = data.get(
-        "seasons",
-        serie.seasons
-    )
-    serie.episodes = data.get(
-        "episodes",
-        serie.episodes
-    )
-    serie.img = data.get(
-        "img",
-        serie.img
-    )
-    serie.trailer = data.get(
-        "trailer",
-        serie.trailer
-    )
+    serie.title = data.get("title", serie.title)
+    serie.creator = data.get("creator", serie.creator)
+    serie.category = data.get("category", serie.category)
+    serie.description = data.get("description", serie.description)
+    serie.detail = data.get("detail", serie.detail)
+    serie.seasons = data.get("seasons", serie.seasons)
+    serie.episodes = data.get("episodes", serie.episodes)
+    serie.img = data.get("img", serie.img)
+    serie.trailer = data.get("trailer", serie.trailer)
     db.session.commit()
     return jsonify(
         serie.to_dict()
     )
 @app.route("/series/<int:id>", methods=["DELETE"])
+@jwt_required()
+@admin_required
 def delete_serie(id):
-
     serie = Series.query.get_or_404(id)
     db.session.delete(serie)
     db.session.commit()
@@ -308,7 +352,8 @@ def register():
     user = User(
         username=username,
         email=email,
-        password=hashed_password
+        password=hashed_password,
+        role="user"
     )
 
     db.session.add(user)
@@ -321,7 +366,8 @@ def register():
     return jsonify({
         "message": "Usuario registrado",
         "token": token,
-        "username": user.username
+        "username": user.username,
+        "role":user.role
     }),201
 
 @app.route("/login", methods=["POST"])
@@ -354,7 +400,21 @@ def login():
 
     return jsonify({
         "token": token,
-        "username": user.username
+        "username": user.username,
+        "role":user.role
+    })
+
+@app.route("/stats")
+@jwt_required()
+@admin_required
+def get_stats():
+    total_users = User.query.count()
+    total_movies = Movie.query.count()
+    total_series = Series.query.count()
+    return jsonify({
+        "users": total_users,
+        "movies": total_movies,
+        "series": total_series
     })
 
 @app.route("/profile")
@@ -362,8 +422,10 @@ def login():
 def profile():
 
     user_id = get_jwt_identity()
-
-    user = User.query.get(user_id)
+    user = db.session.get(
+        User,
+        int(user_id)
+    )
 
     return jsonify(
         user.to_dict()
@@ -389,6 +451,107 @@ def create_subscription():
         "message":"Plan seleccionado",
         "plan": data["plan"]
     })
+
+
+
+# @app.route("/user-content", methods=["GET"])
+# @jwt_required()
+# def get_user_content():
+#     user_id = get_jwt_identity()
+#     items = UserContent.query.filter_by(
+#         user_id=user_id
+#     ).all()
+#     result = []
+#     for item in items:
+#         result.append({
+#             "content_id": item.content_id,
+#             "content_type": item.content_type,
+#             "liked": item.liked,
+#             "in_list": item.in_list
+#         })
+#     return result, 200
+@app.route("/user-content", methods=["GET"])
+@jwt_required()
+def get_user_content():
+    user_id = get_jwt_identity()
+    items = UserContent.query.filter_by(
+        user_id=user_id
+    ).all()
+    result = []
+    for item in items:
+        if item.content_type == "movie":
+            movie = Movie.query.get(item.content_id)
+            if movie:
+                result.append({
+                    "id": movie.id,
+                    "type": "movie",
+                    "title": movie.title,
+                    "img": movie.img,
+                    "category": movie.category,
+                    "duration": movie.duration,
+                    "liked": item.liked,
+                    "in_list": item.in_list
+                })
+        elif item.content_type == "series":
+            serie = Series.query.get(item.content_id)
+            if serie:
+                result.append({
+                    "id": serie.id,
+                    "type": "series",
+                    "title": serie.title,
+                    "img": serie.img,
+                    "category": serie.category,
+                    "liked": item.liked,
+                    "in_list": item.in_list
+                })
+
+    return result, 200
+
+@app.route("/user-content", methods=["PUT"])
+@jwt_required()
+def update_user_content():
+
+    user_id = get_jwt_identity()
+    data = request.get_json()
+    content_id = data["content_id"]
+    content_type = data["content_type"]
+    action = data["action"]
+    item = UserContent.query.filter_by(
+        user_id=user_id,
+        content_id=content_id,
+        content_type=content_type
+    ).first()
+
+    if not item:
+        item = UserContent(
+            user_id=user_id,
+            content_id=content_id,
+            content_type=content_type
+        )
+        db.session.add(item)
+
+    if action == "toggle_list":
+        item.in_list = not item.in_list
+    if action == "like":
+        item.liked = (
+            None
+            if item.liked is True
+            else True
+        )
+    elif action == "dislike":
+        item.liked = (
+            None
+            if item.liked is False
+            else False
+        )
+    db.session.commit()
+
+    return {
+    "liked": item.liked,
+    "in_list": item.in_list
+}
+
+
 
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 5000))
