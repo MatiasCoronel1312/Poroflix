@@ -52,7 +52,7 @@ export const DetailMovie = () => {
       
 
       setLiked(currentContent.liked ?? false);
-      setInList(currentContent.in_list);
+      setInList(currentContent.in_list ?? false);
     } catch (error) {
       console.error(error);
     }

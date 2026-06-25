@@ -457,44 +457,18 @@ def create_subscription():
 @app.route("/user-content", methods=["GET"])
 @jwt_required()
 def get_user_content():
-
     user_id = get_jwt_identity()
     items = UserContent.query.filter_by(
-        user_id=user_id,
-        in_list=True
+        user_id=user_id
     ).all()
     result = []
-
     for item in items:
-        if item.content_type == "movie":
-            movie = Movie.query.get(
-                item.content_id
-            )
-            if movie:
-                result.append({
-                    "id": movie.id,
-                    "title": movie.title,
-                    "description": movie.description,
-                    "img": movie.img,
-                    "type": "movie",
-                    "liked": item.liked,
-                    "in_list": True
-                })
-
-        elif item.content_type == "series":
-            serie = Series.query.get(
-                item.content_id
-            )
-            if serie:
-                result.append({
-                    "id": serie.id,
-                    "title": serie.title,
-                    "description": serie.description,
-                    "img": serie.img,
-                    "type": "series",
-                    "liked": item.liked,
-                    "in_list": True
-                })
+        result.append({
+            "content_id": item.content_id,
+            "content_type": item.content_type,
+            "liked": item.liked,
+            "in_list": item.in_list
+        })
     return result, 200
 
 @app.route("/user-content", methods=["PUT"])
