@@ -10,7 +10,7 @@ export const Checkout = () => {
   const navigate = useNavigate();
   const [importe, setImporte] = useState(0)
   const [plan, setPlan] = useState("")
-  const isAuthenticated = useStore((state) => state.isAuthenticated);
+  const login = useStore((state) => state.login);
   useEffect(() => {
     setPlan(localStorage.getItem("selectedPlan"))
     window.scrollTo({
@@ -47,12 +47,17 @@ export const Checkout = () => {
     try {
 
       const token = localStorage.getItem("token");
+      const username = localStorage.getItem("username");
+      const role = localStorage.getItem("username");
+      
+      console.log(data);//los datos no se guardan
 
-      console.log(data);
 
-      // Acá luego conectarás con tu backend
-
-      alert("Suscripción activada");
+      login({
+        "token": token,
+      "username": username,
+      "role": role,
+      })
 
       navigate("/");
 

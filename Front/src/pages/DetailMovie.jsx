@@ -6,10 +6,13 @@ const apiUrl = import.meta.env.VITE_API_URL;
 
 export const DetailMovie = () => {
   const [movie, setMovie] = useState({});
+  const [liked, setLiked] = useState(null);
   const navigate = useNavigate();
   const { id } = useParams();
   const token = localStorage.getItem("token");
   const handleOpenModal = useStore((state) => state.handleOpenModal);
+  const styleButton =
+    "inline-flex h-12 animate-background-shine items-center justify-center rounded-md border border-[#0830c2] bg-[linear-gradient(110deg,#000103,45%,#1e2631,55%,#000103)] bg-size-[200%_100%] px-5 font-medium text-gray-400 transition-colors focus:outline-none focus:ring-2 focus:ring-offset-gray-50 hover:cursor-pointer";
 
   useEffect(() => {
     fetch(`${apiUrl}/movies/${id}`)
@@ -41,6 +44,43 @@ export const DetailMovie = () => {
     });
     const data = await response.json();
     console.log(data);
+  };
+
+  const updateUserContent = async (contentId, action) => {
+    const response = await fetch(`${apiUrl}user-content`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+
+      body: JSON.stringify({
+        content_id: contentId,
+        content_type: "movie",
+        action,
+      }),
+    });
+    const data = await response.json();
+    setLiked(data.liked);
+  };
+
+  const handleLike = async () => {
+    if (!token) {
+      handleOpenModal();
+      navigate("/");
+      return;
+    }
+    await updateUserContent(id, "like");
+    
+  };
+  const handleDislike = async () => {
+    if (!token) {
+      handleOpenModal();
+      navigate("/");
+      return;
+    }
+    await updateUserContent(id, "dislike");
+   
   };
 
   const handleAddToList = (id) => {
@@ -85,24 +125,42 @@ export const DetailMovie = () => {
             </div>
             <div className="flex flex-wrap justify-center gap-4 mt-6">
               <button
-                className="inline-flex h-12 animate-background-shine items-center justify-center rounded-md border border-[#0830c2] bg-[linear-gradient(110deg,#000103,45%,#1e2631,55%,#000103)] bg-size-[200%_100%] px-5 font-medium text-gray-400 transition-colors focus:outline-none focus:ring-2 focus:ring-offset-gray-50 hover:cursor-pointer"
+                className={styleButton}
                 onClick={() => handleAddToList(id)}
               >
                 + Lista
               </button>
               <button
-                className="inline-flex h-12 animate-background-shine items-center justify-center rounded-md border border-[#0830c2] bg-[linear-gradient(110deg,#000103,45%,#1e2631,55%,#000103)] bg-size-[200%_100%] px-5 font-medium text-gray-400 transition-colors focus:outline-none focus:ring-2 focus:ring-offset-gray-50 hover:cursor-pointer"
+                className={styleButton}
                 onClick={() => {
                   handlePlay(id);
                 }}
               >
                 Reproducir
               </button>
+              <button onClick={handleLike}>
+                {liked === true ? (
+                  <i
+                    className={`fa-regular fa-thumbs-up ${styleButton} text-xl p-2.5`}
+                  ></i>
+                ) : (
+                  <i
+                    className={`fa-solid fa-thumbs-up ${styleButton} text-xl p-2.5`}
+                  ></i>
+                )}
+              </button>
 
-              <i class="fa-solid fa-thumbs-up inline-flex h-12 animate-background-shine items-center justify-center rounded-md border border-[#0830c2] bg-[linear-gradient(110deg,#000103,45%,#1e2631,55%,#000103)] bg-size-[200%_100%] px-5 font-medium text-gray-400 transition-colors focus:outline-none focus:ring-2 focus:ring-offset-gray-50 hover:cursor-pointer text-xl p-2.5"></i>
-              <i class="fa-regular fa-thumbs-up inline-flex h-12 animate-background-shine items-center justify-center rounded-md border border-[#0830c2] bg-[linear-gradient(110deg,#000103,45%,#1e2631,55%,#000103)] bg-size-[200%_100%] px-5 font-medium text-gray-400 transition-colors focus:outline-none focus:ring-2 focus:ring-offset-gray-50 hover:cursor-pointer text-xl p-2.5"></i>
-              <i class="fa-solid fa-thumbs-down inline-flex h-12 animate-background-shine items-center justify-center rounded-md border border-[#0830c2] bg-[linear-gradient(110deg,#000103,45%,#1e2631,55%,#000103)] bg-size-[200%_100%] px-5 font-medium text-gray-400 transition-colors focus:outline-none focus:ring-2 focus:ring-offset-gray-50 hover:cursor-pointer text-xl p-2.5"></i>
-              <i class="fa-regular fa-thumbs-down inline-flex h-12 animate-background-shine items-center justify-center rounded-md border border-[#0830c2] bg-[linear-gradient(110deg,#000103,45%,#1e2631,55%,#000103)] bg-size-[200%_100%] px-5 font-medium text-gray-400 transition-colors focus:outline-none focus:ring-2 focus:ring-offset-gray-50 hover:cursor-pointer text-xl p-2.5"></i>
+              <button onClick={handleDislike}>
+                {liked === false ? (
+                  <i
+                    className={`fa-solid fa-thumbs-down ${styleButton} text-xl p-2.5`}
+                  ></i>
+                ) : (
+                  <i
+                    className={`fa-regular fa-thumbs-down ${styleButton} text-xl p-2.5`}
+                  ></i>
+                )}
+              </button>
             </div>
           </div>
           <div className="w-full lg:w-1/2 text-white">

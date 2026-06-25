@@ -11,6 +11,7 @@ export const Perfil = () => {
   const username = localStorage.getItem("username");
   const selectedPlan = localStorage.getItem("selectedPlan");
   const token = localStorage.getItem("token");
+
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -45,35 +46,40 @@ export const Perfil = () => {
         </button>
       </div>
       <div className="flex justify-start gap-10 pb-10 text-xl">
-        <div>Nombre:  </div>
-        <div>Usuario:  {username}</div>
+        <div>Usuario: {username}</div>
         <div>Plan: {selectedPlan}</div>
       </div>
       <div className="">
         <div className="text-4xl">Mi Lista:</div>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-          {myList.map((item) =>
-            item.type == "movie" ? (
-              <Card
-                key={item.id}
-                id={item.id}
-                title={item.title}
-                director={item.director}
-                category={item.category}
-                duration={item.duration}
-                img={item.img}
-              />
-            ) : (
-              <CardSerie
-                key={item.id}
-                id={item.id}
-                title={item.title}
-                category={item.category}
-                img={item.img}
-              />
-            ),
-          )}
-        </div>
+        {myList.length == 0 ? (
+          <div className="text-2xl w-full p-5">
+            Agrega series y peliculas a tu lista.
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            {myList.map((item) =>
+              item.type == "movie" ? (
+                <Card
+                  key={item.id}
+                  id={item.id}
+                  title={item.title}
+                  director={item.director}
+                  category={item.category}
+                  duration={item.duration}
+                  img={item.img}
+                />
+              ) : (
+                <CardSerie
+                  key={item.id}
+                  id={item.id}
+                  title={item.title}
+                  category={item.category}
+                  img={item.img}
+                />
+              ),
+            )}
+          </div>
+        )}
       </div>
     </div>
   );

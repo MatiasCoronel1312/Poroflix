@@ -534,7 +534,10 @@ def update_user_content():
         )
     db.session.commit()
 
-    return {"msg": "Actualizado"}
+    return {
+    "liked": item.liked,
+    "in_list": item.in_list
+}
 
 
 
