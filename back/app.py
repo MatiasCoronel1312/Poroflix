@@ -477,7 +477,8 @@ def get_user_content():
                     "description": movie.description,
                     "img": movie.img,
                     "type": "movie",
-                    "liked": item.liked
+                    "liked": item.liked,
+                    "in_list": True
                 })
 
         elif item.content_type == "series":
@@ -491,7 +492,8 @@ def get_user_content():
                     "description": serie.description,
                     "img": serie.img,
                     "type": "series",
-                    "liked": item.liked
+                    "liked": item.liked,
+                    "in_list": True
                 })
     return result, 200
 

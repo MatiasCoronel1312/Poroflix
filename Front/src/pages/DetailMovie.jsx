@@ -7,6 +7,7 @@ const apiUrl = import.meta.env.VITE_API_URL;
 export const DetailMovie = () => {
   const [movie, setMovie] = useState({});
   const [liked, setLiked] = useState(null);
+  const [inList, setInList] = useState(false);
   const navigate = useNavigate();
   const { id } = useParams();
   const token = localStorage.getItem("token");
@@ -21,12 +22,41 @@ export const DetailMovie = () => {
       .catch((error) => {
         console.log("error:", error);
       });
-
+    if (token) {
+      fetchUserContent();
+    }
     window.scrollTo({
       top: 0,
       behavior: "smooth",
     });
   }, []);
+
+  const fetchUserContent = async () => {
+    try {
+      const response = await fetch(`${apiUrl}user-content`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      if (!response.ok) {
+        throw new Error("Error al obtener userContent");
+      }
+      const data = await response.json();
+      console.log(data);
+      
+      const currentContent = data.find(
+        (item) => item.id === Number(id) && item.type === "movie",
+      );
+      console.log(currentContent);
+      
+
+      setLiked(currentContent.liked ?? false);
+      setInList(currentContent.in_list);
+    } catch (error) {
+      console.error(error);
+    }
+  };
 
   const addToList = async (contentId) => {
     const response = await fetch(`${apiUrl}user-content`, {
@@ -43,6 +73,7 @@ export const DetailMovie = () => {
       }),
     });
     const data = await response.json();
+    setInList(data.in_list)
     console.log(data);
   };
 
@@ -61,6 +92,7 @@ export const DetailMovie = () => {
       }),
     });
     const data = await response.json();
+    console.log(data);
     setLiked(data.liked);
   };
 
@@ -71,7 +103,6 @@ export const DetailMovie = () => {
       return;
     }
     await updateUserContent(id, "like");
-    
   };
   const handleDislike = async () => {
     if (!token) {
@@ -80,7 +111,6 @@ export const DetailMovie = () => {
       return;
     }
     await updateUserContent(id, "dislike");
-   
   };
 
   const handleAddToList = (id) => {
@@ -128,7 +158,7 @@ export const DetailMovie = () => {
                 className={styleButton}
                 onClick={() => handleAddToList(id)}
               >
-                + Lista
+               {inList?" - ":" + "}Lista
               </button>
               <button
                 className={styleButton}
@@ -141,11 +171,11 @@ export const DetailMovie = () => {
               <button onClick={handleLike}>
                 {liked === true ? (
                   <i
-                    className={`fa-regular fa-thumbs-up ${styleButton} text-xl p-2.5`}
+                    className={`fa-solid fa-thumbs-up ${styleButton} text-xl p-2.5`}
                   ></i>
                 ) : (
                   <i
-                    className={`fa-solid fa-thumbs-up ${styleButton} text-xl p-2.5`}
+                    className={`fa-regular fa-thumbs-up ${styleButton} text-xl p-2.5`}
                   ></i>
                 )}
               </button>
