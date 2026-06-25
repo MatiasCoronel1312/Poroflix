@@ -21,10 +21,9 @@ export const Perfil = () => {
           Authorization: `Bearer ${token}`,
         },
       });
-      const data = await response.json();
-      console.log(data);
-
-      setMyList(data);
+      const data = await response.json();     
+      const myList = data.filter((item) => item.in_list === true)      
+      setMyList(myList);
     };
     fetchMyList();
   }, []);
@@ -41,7 +40,7 @@ export const Perfil = () => {
           className="inline-flex h-12 animate-background-shine items-center justify-center rounded-md border border-[#0830c2] bg-[linear-gradient(110deg,#000103,45%,#1e2631,55%,#000103)] bg-size-[200%_100%] px-5 font-medium text-gray-400 transition-colors focus:outline-none focus:ring-2 focus:ring-offset-gray-50 hover:cursor-pointer"
           onClick={() => salir()}
         >
-          <i class="fa-solid fa-right-from-bracket pr-2"></i>
+          <i className="fa-solid fa-right-from-bracket pr-2"></i>
           Salir
         </button>
       </div>

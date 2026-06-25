@@ -43,16 +43,16 @@ export const DetailMovie = () => {
         throw new Error("Error al obtener userContent");
       }
       const data = await response.json();
-      console.log(data);
+      console.log("data: ", data);
       
       const currentContent = data.find(
-        (item) => item.id === Number(id) && item.type === "movie",
+        (item) => item.content_id === Number(id) && item.content_type === "movie",
       );
-      console.log(currentContent);
+      console.log("currentContent: ",currentContent);
       
 
-      setLiked(currentContent.liked ?? false);
-      setInList(currentContent.in_list ?? false);
+      setLiked(currentContent?.liked ?? null);
+      setInList(currentContent?.in_list ?? false);
     } catch (error) {
       console.error(error);
     }
