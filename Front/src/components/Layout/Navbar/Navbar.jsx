@@ -14,10 +14,22 @@ export const Navbar = () => {
   const role = useStore((state) => state.role);
   const token = useStore((state) => state.isAuthenticated);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [showSearch, setShowSearch] = useState(false);
+  const [search, setSearch] = useState("");
+  const [item, setItem] = useState([]);
 
+
+
+  
   useEffect(() => {
     setIsAuthenticated(token);
   }, [token]);
+  
+  const filteredMovies = item.filter((movie) =>
+  movie.title
+    .toLowerCase()
+    .includes(search.toLowerCase())
+);
 
   const handleButtonUSer = () => {
     if (isAuthenticated) {
@@ -44,10 +56,22 @@ export const Navbar = () => {
             <Link to="/series" className="hover:text-gray-300 transition">
               Series
             </Link>
-           
-            <Link to="/" className="text-2xl">
+
+            <button
+              onClick={() => setShowSearch(!showSearch)}
+              className="text-2xl"
+            >
               <i className="fa-solid fa-magnifying-glass"></i>
-            </Link>
+            </button>
+            {showSearch && (
+              <input
+                type="text"
+                placeholder="Buscar..."
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+                className="border p-2 rounded"
+              />
+            )}
             <button onClick={handleButtonUSer} className="hover:cursor-pointer">
               {isAuthenticated ? <Avatar /> : <UserIcon />}
             </button>
@@ -75,7 +99,6 @@ export const Navbar = () => {
             <Link to="/series" onClick={() => setMenuOpen(false)}>
               Series
             </Link>
-          
           </div>
         )}
       </div>

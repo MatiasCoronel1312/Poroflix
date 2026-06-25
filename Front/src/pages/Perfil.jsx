@@ -21,8 +21,8 @@ export const Perfil = () => {
           Authorization: `Bearer ${token}`,
         },
       });
-      const data = await response.json();     
-      const myList = data.filter((item) => item.in_list === true)      
+      const data = await response.json();
+      const myList = data.filter((item) => item.in_list === true);
       setMyList(myList);
     };
     fetchMyList();
@@ -36,6 +36,7 @@ export const Perfil = () => {
     <div className="w-full h-screen text-white text-left flex flex-col justify-start px-1">
       <div className="flex justify-between py-5">
         <div className="text-4xl">Perfil:</div>
+        
         <button
           className="inline-flex h-12 animate-background-shine items-center justify-center rounded-md border border-[#0830c2] bg-[linear-gradient(110deg,#000103,45%,#1e2631,55%,#000103)] bg-size-[200%_100%] px-5 font-medium text-gray-400 transition-colors focus:outline-none focus:ring-2 focus:ring-offset-gray-50 hover:cursor-pointer"
           onClick={() => salir()}

@@ -6,10 +6,14 @@ const apiUrl = import.meta.env.VITE_API_URL;
 
 export const DetailSerie = () => {
   const [serie, setSerie] = useState({});
+  const [liked, setLiked] = useState(null);
+  const [inList, setInList] = useState(false);
   const navigate = useNavigate();
   const { id } = useParams();
   const token = localStorage.getItem("token");
   const handleOpenModal = useStore((state) => state.handleOpenModal);
+  const styleButton =
+    "inline-flex h-12 animate-background-shine items-center justify-center rounded-md border border-[#0830c2] bg-[linear-gradient(110deg,#000103,45%,#1e2631,55%,#000103)] bg-size-[200%_100%] px-5 font-medium text-gray-400 transition-colors focus:outline-none focus:ring-2 focus:ring-offset-gray-50 hover:cursor-pointer";
 
   useEffect(() => {
     fetch(`${apiUrl}/series/${id}`)
@@ -18,12 +22,36 @@ export const DetailSerie = () => {
       .catch((error) => {
         console.log("error:", error);
       });
-
+    if (token) {
+      fetchUserContent();
+    }
     window.scrollTo({
       top: 0,
       behavior: "smooth",
     });
   }, []);
+
+  const fetchUserContent = async () => {
+    try {
+      const response = await fetch(`${apiUrl}user-content`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      if (!response.ok) {
+        throw new Error("Error al obtener userContent");
+      }
+      const data = await response.json();
+      const currentContent = data.find(
+        (item) => item.id === Number(id) && item.type === "series",
+      );
+      setLiked(currentContent?.liked ?? null);
+      setInList(currentContent?.in_list ?? false);
+    } catch (error) {
+      console.error(error);
+    }
+  };
 
   const addToList = async (contentId) => {
     const response = await fetch(`${apiUrl}user-content`, {
@@ -40,10 +68,43 @@ export const DetailSerie = () => {
       }),
     });
     const data = await response.json();
-    console.log(data);
+    setInList(data.in_list);
+  };
+  const updateUserContent = async (contentId, action) => {
+    const response = await fetch(`${apiUrl}user-content`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+
+      body: JSON.stringify({
+        content_id: contentId,
+        content_type: "series",
+        action,
+      }),
+    });
+    const data = await response.json();
+    setLiked(data.liked);
+  };
+  const handleLike = async () => {
+    if (!token) {
+      handleOpenModal();
+      navigate("/");
+      return;
+    }
+    await updateUserContent(id, "like");
+  };
+  const handleDislike = async () => {
+    if (!token) {
+      handleOpenModal();
+      navigate("/");
+      return;
+    }
+    await updateUserContent(id, "dislike");
   };
 
-   const handleAddToList = (id) => {
+  const handleAddToList = (id) => {
     if (!token) {
       handleOpenModal();
       navigate("/");
@@ -85,18 +146,41 @@ export const DetailSerie = () => {
             </div>
             <div className="flex flex-wrap justify-center gap-4 mt-6">
               <button
-                className="inline-flex h-12 animate-background-shine items-center justify-center rounded-md border border-[#0830c2] bg-[linear-gradient(110deg,#000103,45%,#1e2631,55%,#000103)] bg-size-[200%_100%] px-5 font-medium text-gray-400 transition-colors focus:outline-none focus:ring-2 focus:ring-offset-gray-50 hover:cursor-pointer"
+                className={styleButton}
                 onClick={() => handleAddToList(id)}
               >
-                + Lista
+                {inList ? " - " : " + "}Lista
               </button>
               <button
-                className="inline-flex h-12 animate-background-shine items-center justify-center rounded-md border border-[#0830c2] bg-[linear-gradient(110deg,#000103,45%,#1e2631,55%,#000103)] bg-size-[200%_100%] px-5 font-medium text-gray-400 transition-colors focus:outline-none focus:ring-2 focus:ring-offset-gray-50 hover:cursor-pointer"
+                className={styleButton}
                 onClick={() => {
-                  handlePlay(id)
+                  handlePlay(id);
                 }}
               >
                 Reproducir
+              </button>
+              <button onClick={handleLike}>
+                {liked === true ? (
+                  <i
+                    className={`fa-solid fa-thumbs-up ${styleButton} text-xl p-2.5`}
+                  ></i>
+                ) : (
+                  <i
+                    className={`fa-regular fa-thumbs-up ${styleButton} text-xl p-2.5`}
+                  ></i>
+                )}
+              </button>
+
+              <button onClick={handleDislike}>
+                {liked === false ? (
+                  <i
+                    className={`fa-solid fa-thumbs-down ${styleButton} text-xl p-2.5`}
+                  ></i>
+                ) : (
+                  <i
+                    className={`fa-regular fa-thumbs-down ${styleButton} text-xl p-2.5`}
+                  ></i>
+                )}
               </button>
             </div>
           </div>

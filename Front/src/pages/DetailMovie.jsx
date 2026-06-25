@@ -43,14 +43,9 @@ export const DetailMovie = () => {
         throw new Error("Error al obtener userContent");
       }
       const data = await response.json();
-      console.log("data: ", data);
-      
       const currentContent = data.find(
-        (item) => item.content_id === Number(id) && item.content_type === "movie",
+        (item) => item.id === Number(id) && item.type === "movie",
       );
-      console.log("currentContent: ",currentContent);
-      
-
       setLiked(currentContent?.liked ?? null);
       setInList(currentContent?.in_list ?? false);
     } catch (error) {
@@ -73,8 +68,7 @@ export const DetailMovie = () => {
       }),
     });
     const data = await response.json();
-    setInList(data.in_list)
-    console.log(data);
+    setInList(data.in_list);
   };
 
   const updateUserContent = async (contentId, action) => {
@@ -92,7 +86,6 @@ export const DetailMovie = () => {
       }),
     });
     const data = await response.json();
-    console.log(data);
     setLiked(data.liked);
   };
 
@@ -158,7 +151,7 @@ export const DetailMovie = () => {
                 className={styleButton}
                 onClick={() => handleAddToList(id)}
               >
-               {inList?" - ":" + "}Lista
+                {inList ? " - " : " + "}Lista
               </button>
               <button
                 className={styleButton}
