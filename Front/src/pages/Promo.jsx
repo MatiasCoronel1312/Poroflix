@@ -79,7 +79,7 @@ export const Promo = () => {
   };
   return (
     <div
-      className="w-full min-h-screen flex flex-col gap-10 py-10 bg-cover bg-center"
+      className="max-w-7xl mx-auto px-4 min-h-screen flex flex-col gap-10 py-10 bg-cover bg-center"
       style={{
         backgroundImage: `url(${fondo})`,
       }}

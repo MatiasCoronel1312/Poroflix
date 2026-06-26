@@ -32,7 +32,7 @@ const Dashboard = () => {
   }, []);
   return (
     <section className="min-h-screen bg-black text-white px-10 py-2">
-      <div className="max-w-7xl mx-auto">
+      <div className="max-w-7xl mx-auto px-4">
         <h1 className="text-5xl font-bold mb-12">Panel Administrador</h1>
         <DashboardStats stats={stats}/>
         <div className="grid grid-cols-1 gap-8 mt-10">

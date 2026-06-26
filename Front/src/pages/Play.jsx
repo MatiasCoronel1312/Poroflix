@@ -25,8 +25,8 @@ const Play = ({ type, id }) => {
     fetchData();
   }, [id, type]);
   return (
-    <div className="text-white">
-      <iframe className="h-115 w-full border-2 border-blue-600" src={item.trailer}></iframe>
+    <div className="text-white px-4">
+      <iframe className="h-115 w-full border-2 border-blue-600 max-w-7xl mx-auto" src={item.trailer}></iframe>
       <button className="hover:cursor-pointer"
         onClick={() => {
           navigate(-1);

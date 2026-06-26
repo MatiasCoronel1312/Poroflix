@@ -4,7 +4,6 @@ import { CarouselHome } from "@/components/CarouselHome";
 
 export const Home = () => {
   const apiUrl = import.meta.env.VITE_API_URL;
-
   const [movies, setMovies] = useState([]);
 
   useEffect(() => {
@@ -35,8 +34,8 @@ export const Home = () => {
   }, []);
 
   return (
-    <main className="w-full">
-      <section className="w-full h-85 sm:h-80 md:h-112 flex items-center justify-center">
+    <main className="w-full ">
+      <section className="max-w-7xl mx-auto px-4 h-85 sm:h-80 md:h-112 flex items-center justify-center">
         <CarouselHome movies={movies} />
       </section>
       <section className="max-w-7xl mx-auto px-4 pb-10">

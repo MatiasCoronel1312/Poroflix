@@ -33,7 +33,7 @@ export const Perfil = () => {
     navigate("/");
   };
   return (
-    <div className="w-full h-screen text-white text-left flex flex-col justify-start px-1">
+    <div className="max-w-7xl mx-auto px-4 h-screen text-white text-left flex flex-col justify-start">
       <div className="flex justify-between py-5">
         <div className="text-4xl">Perfil:</div>
         
