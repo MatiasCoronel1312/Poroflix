@@ -7,6 +7,7 @@ from werkzeug.security import generate_password_hash , check_password_hash
 from flask_jwt_extended import JWTManager , create_access_token ,jwt_required, get_jwt_identity 
 from functools import wraps
 from datetime import timedelta
+import pandas as pd
 
 load_dotenv()
 
@@ -25,6 +26,7 @@ app.config["JWT_ACCESS_TOKEN_EXPIRES"] = timedelta(hours=24)
 
 db = SQLAlchemy (app)
 jwt = JWTManager(app)
+
 def admin_required(func):
 
     @wraps(func)
@@ -549,6 +551,43 @@ def update_user_content():
     "liked": item.liked,
     "in_list": item.in_list
 }
+
+@app.route("/all-stats", methods=["GET"])
+@jwt_required()
+@admin_required
+def get_all_stats():
+    movies = pd.read_sql(Movie.query.statement, db.engine)
+    series = pd.read_sql(Series.query.statement, db.engine)
+    users = pd.read_sql(User.query.statement, db.engine)
+    user_content = pd.read_sql(UserContent.query.statement, db.engine)
+
+    users = len(users)
+    movies = len(movies)
+    series = len(series)
+    likes = len(
+        user_content[
+            user_content["liked"] == True
+        ]
+    )
+    dislikes = len(
+        user_content[
+            user_content["liked"] == False
+        ]
+    )
+    my_list = len(
+    user_content[
+        user_content["in_list"] == True
+        ]
+    )
+    return {
+        "users": users,
+        "movies": movies,
+        "series": series,
+        "likes": likes,
+        "dislikes": dislikes,
+        "my_list": my_list
+    }
+
 
 
 
