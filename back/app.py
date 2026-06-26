@@ -7,6 +7,7 @@ from werkzeug.security import generate_password_hash , check_password_hash
 from flask_jwt_extended import JWTManager , create_access_token ,jwt_required, get_jwt_identity 
 from functools import wraps
 from datetime import timedelta
+import pandas as pd
 
 load_dotenv()
 
@@ -25,6 +26,7 @@ app.config["JWT_ACCESS_TOKEN_EXPIRES"] = timedelta(hours=24)
 
 db = SQLAlchemy (app)
 jwt = JWTManager(app)
+
 def admin_required(func):
 
     @wraps(func)
@@ -404,19 +406,6 @@ def login():
         "role":user.role
     })
 
-@app.route("/stats")
-@jwt_required()
-@admin_required
-def get_stats():
-    total_users = User.query.count()
-    total_movies = Movie.query.count()
-    total_series = Series.query.count()
-    return jsonify({
-        "users": total_users,
-        "movies": total_movies,
-        "series": total_series
-    })
-
 @app.route("/profile")
 @jwt_required()
 def profile():
@@ -550,7 +539,148 @@ def update_user_content():
     "in_list": item.in_list
 }
 
+def get_top_content(user_content_df, content_df, content_type, liked_value, column_name):
+    filtered = user_content_df[
+        (user_content_df["content_type"] == content_type) &
+        (user_content_df["liked"] == liked_value)
+    ]
 
+    top = (
+        filtered
+        .groupby("content_id")
+        .size()
+        .sort_values(ascending=False)
+        .head(10)
+        .reset_index()
+    )
+
+    top.columns = ["content_id", column_name]
+
+    top = top.merge(
+        content_df,
+        left_on="content_id",
+        right_on="id"
+    )
+
+    return top[
+        ["title", column_name]
+    ]
+
+
+@app.route("/stats", methods=["GET"])
+@jwt_required()
+@admin_required
+def get_all_stats():
+
+    # DataFrames
+    movies_df = pd.read_sql(Movie.query.statement, db.engine)
+    series_df = pd.read_sql(Series.query.statement, db.engine)
+    users_df = pd.read_sql(User.query.statement, db.engine)
+    user_content_df = pd.read_sql(UserContent.query.statement, db.engine)
+
+    # Estadísticas generales
+    users = len(users_df)
+    movies = len(movies_df)
+    series = len(series_df)
+
+    likes = len(
+        user_content_df[
+            user_content_df["liked"] == True
+        ]
+    )
+
+    dislikes = len(
+        user_content_df[
+            user_content_df["liked"] == False
+        ]
+    )
+
+    my_list = len(
+        user_content_df[
+            user_content_df["in_list"] == True
+        ]
+    )
+
+    # Rankings
+    top_movies = get_top_content(
+        user_content_df,
+        movies_df,
+        "movie",
+        True,
+        "likes"
+    )
+
+    top_series = get_top_content(
+        user_content_df,
+        series_df,
+        "series",
+        True,
+        "likes"
+    )
+
+    top_movies_dislike = get_top_content(
+        user_content_df,
+        movies_df,
+        "movie",
+        False,
+        "dislikes"
+    )
+
+    top_series_dislike = get_top_content(
+        user_content_df,
+        series_df,
+        "series",
+        False,
+        "dislikes"
+    )
+
+    total_interactions = len(user_content_df)
+
+    engagement_rate = total_interactions / len(users_df)
+    total_reactions = likes + dislikes
+
+    approval_rate = (
+        likes / total_reactions
+        if total_reactions > 0 else 0
+    )
+    user_activity = (
+    user_content_df
+        .groupby("user_id")
+        .size()
+        .sort_values(ascending=False)
+        .head(10)
+        .reset_index(name="actions")
+    )
+    my_list_rank = (
+        user_content_df[user_content_df["in_list"] == True]
+        .groupby("content_id")
+        .size()
+        .sort_values(ascending=False)
+        .head(10)
+        .reset_index(name="saved")
+    )
+
+
+    return {
+        "users": users,
+        "movies": movies,
+        "series": series,
+        "likes": likes,
+        "dislikes": dislikes,
+        "my_list": my_list,
+
+        "engagement_rate": engagement_rate,
+        "approval_rate": approval_rate,
+
+        "top_users": user_activity.to_dict(orient="records"),
+        "top_saved": my_list_rank.to_dict(orient="records"),
+
+        "top_movies": top_movies.to_dict(orient="records"),
+        "top_series": top_series.to_dict(orient="records"),
+
+        "top_movies_dislike": top_movies_dislike.to_dict(orient="records"),
+        "top_series_dislike": top_series_dislike.to_dict(orient="records")
+    }
 
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 5000))
