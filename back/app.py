@@ -406,19 +406,6 @@ def login():
         "role":user.role
     })
 
-@app.route("/stats")
-@jwt_required()
-@admin_required
-def get_stats():
-    total_users = User.query.count()
-    total_movies = Movie.query.count()
-    total_series = Series.query.count()
-    return jsonify({
-        "users": total_users,
-        "movies": total_movies,
-        "series": total_series
-    })
-
 @app.route("/profile")
 @jwt_required()
 def profile():
@@ -552,7 +539,7 @@ def update_user_content():
     "in_list": item.in_list
 }
 
-@app.route("/all-stats", methods=["GET"])
+@app.route("/stats", methods=["GET"])
 @jwt_required()
 @admin_required
 def get_all_stats():
@@ -579,16 +566,109 @@ def get_all_stats():
         user_content["in_list"] == True
         ]
     )
+    movie_likes = user_content[
+        (user_content["content_type"] == "movie") &
+        (user_content["liked"] == True)
+    ]
+    top_movies = (
+        movie_likes
+            .groupby("content_id")
+            .size()
+            .sort_values(ascending=False)
+            .head(10)
+    )
+    top_movies = top_movies.reset_index()
+    top_movies.columns = ["content_id", "likes"]
+    top_movies = top_movies.merge(
+        movies,
+        left_on="content_id",
+        right_on="id"
+    )
+    top_movies = top_movies[
+        ["title", "likes"]
+    ]
+#----------------------------
+    serie_likes = user_content[
+        (user_content["content_type"] == "series") &
+        (user_content["liked"] == True)
+    ]
+    top_series = (
+        serie_likes
+            .groupby("content_id")
+            .size()
+            .sort_values(ascending=False)
+            .head(10)
+    )
+    top_series = top_series.reset_index()
+    top_series.columns = ["content_id", "likes"]
+    top_series = top_series.merge(
+        movies,
+        left_on="content_id",
+        right_on="id"
+    )
+    top_series = top_series[
+        ["title", "likes"]
+    ]
+
+
+#-------------------------------------------------
+    movie_dislikes = user_content[
+        (user_content["content_type"] == "movie") &
+        (user_content["liked"] == False)
+    ]
+    top_movies_dislike = (
+        movie_dislikes
+            .groupby("content_id")
+            .size()
+            .sort_values(ascending=False)
+            .head(10)
+    )
+    top_movies_dislike = top_movies_dislike.reset_index()
+    top_movies_dislike.columns = ["content_id", "dislikes"]
+    top_movies_dislike = top_movies_dislike.merge(
+        movies,
+        left_on="content_id",
+        right_on="id"
+    )
+    top_movies_dislike = top_movies_dislike[
+        ["title", "likes"]
+    ]
+#----------------------------
+    serie_dislikes = user_content[
+        (user_content["content_type"] == "series") &
+        (user_content["liked"] == False)
+    ]
+    top_series_dislike = (
+        serie_dislikes
+            .groupby("content_id")
+            .size()
+            .sort_values(ascending=False)
+            .head(10)
+    )
+    top_series_dislike = top_series_dislike.reset_index()
+    top_series_dislike.columns = ["content_id", "likes"]
+    top_series_dislike = top_series_dislike.merge(
+        movies,
+        left_on="content_id",
+        right_on="id"
+    )
+    top_series_dislike = top_series_dislike[
+        ["title", "likes"]
+    ]
+
+
     return {
         "users": users,
         "movies": movies,
         "series": series,
         "likes": likes,
         "dislikes": dislikes,
-        "my_list": my_list
+        "my_list": my_list,
+        "top_movies": top_movies.to_dict(orient="records"),
+        "top_series": top_series.to_dict(orient="records"),
+        "top_movies_dislike": top_movies_dislike.to_dict(orient="records"),
+        "top_series_dislike": top_series_dislike.to_dict(orient="records")
     }
-
-
 
 
 if __name__ == "__main__":
