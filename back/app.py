@@ -634,6 +634,33 @@ def get_all_stats():
         "dislikes"
     )
 
+    total_interactions = len(user_content_df)
+
+    engagement_rate = total_interactions / len(users_df)
+    total_reactions = likes + dislikes
+
+    approval_rate = (
+        likes / total_reactions
+        if total_reactions > 0 else 0
+    )
+    user_activity = (
+    user_content_df
+        .groupby("user_id")
+        .size()
+        .sort_values(ascending=False)
+        .head(10)
+        .reset_index(name="actions")
+    )
+    my_list_rank = (
+        user_content_df[user_content_df["in_list"] == True]
+        .groupby("content_id")
+        .size()
+        .sort_values(ascending=False)
+        .head(10)
+        .reset_index(name="saved")
+    )
+
+
     return {
         "users": users,
         "movies": movies,
@@ -641,6 +668,12 @@ def get_all_stats():
         "likes": likes,
         "dislikes": dislikes,
         "my_list": my_list,
+
+        "engagement_rate": engagement_rate,
+        "approval_rate": approval_rate,
+
+        "top_users": user_activity.to_dict(orient="records"),
+        "top_saved": my_list_rank.to_dict(orient="records"),
 
         "top_movies": top_movies.to_dict(orient="records"),
         "top_series": top_series.to_dict(orient="records"),
