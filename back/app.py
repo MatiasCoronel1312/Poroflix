@@ -454,22 +454,21 @@ def create_subscription():
 
 
 
-# @app.route("/user-content", methods=["GET"])
-# @jwt_required()
-# def get_user_content():
-#     user_id = get_jwt_identity()
-#     items = UserContent.query.filter_by(
-#         user_id=user_id
-#     ).all()
-#     result = []
-#     for item in items:
-#         result.append({
-#             "content_id": item.content_id,
-#             "content_type": item.content_type,
-#             "liked": item.liked,
-#             "in_list": item.in_list
-#         })
-#     return result, 200
+@app.route("/users", methods=["GET"])
+@jwt_required()
+@admin_required
+def get_users():
+    users = User.query.all()
+    result = []
+    for user in users:
+        result.append({
+            "id": user.id,
+            "username": user.username,
+            "email": user.email,
+            "role": user.role
+        })
+    return [user.to_dict() for user in users], 200
+
 @app.route("/user-content", methods=["GET"])
 @jwt_required()
 def get_user_content():

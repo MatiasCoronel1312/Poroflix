@@ -66,10 +66,10 @@ export const Checkout = () => {
   };
 
   return (
-    <div className="min-h-screen bg-black flex justify-center items-center py-10">
+    <div className="min-h-screen bg-black flex justify-center items-center py-10 max-w-7xl mx-auto px-4">
       <form
         onSubmit={handleSubmit(onSubmit)}
-        className="w-full max-w-4xl bg-zinc-900 rounded-xl p-8 border border-blue-700"
+        className="w-full bg-zinc-900 rounded-xl p-8 border border-blue-700"
       >
         <h1 className="text-white text-4xl font-bold mb-8 text-center">
           Finalizar Suscripción

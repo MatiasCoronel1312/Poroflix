@@ -122,7 +122,7 @@ export const DetailSerie = () => {
   };
 
   return (
-    <div className="relative min-h-screen overflow-hidden">
+    <div className="relative min-h-screen overflow-hidden max-w-7xl mx-auto px-4">
       <div
         className="absolute inset-0 bg-cover bg-center"
         style={{
