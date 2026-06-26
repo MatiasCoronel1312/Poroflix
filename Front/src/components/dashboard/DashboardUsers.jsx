@@ -9,6 +9,7 @@ const DashboardUsers = ({ refreshStats }) => {
   }, []);
 
   const fetchUsers = async () => {
+    const token = localStorage.getItem("token");
     const response = await fetch(`${apiUrl}users`, {
       headers: {
         Authorization: `Bearer ${token}`,
@@ -19,10 +20,8 @@ const DashboardUsers = ({ refreshStats }) => {
   };
   return (
     <div className="border border-blue-700 rounded-3xl p-8 mt-10">
-      <h2 className=" text-3xl font-bold mb-6">Usuarios</h2>
-      <button className="border border-blue-700 px-5 py-2 rounded-xl">
-        Ver usuarios
-      </button>
+      <div className="text-3xl font-bold mb-10">Usuarios</div>
+      
       <table className="w-full">
         <thead>
           <tr>
