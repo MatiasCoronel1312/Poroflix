@@ -1,5 +1,5 @@
 import React from 'react'
-import avatar from "../../public/img.jfif"
+import avatar from "/img.jfif"
 export const Avatar = () => {
   return (
     <div className=''>
