@@ -539,123 +539,100 @@ def update_user_content():
     "in_list": item.in_list
 }
 
+def get_top_content(user_content_df, content_df, content_type, liked_value, column_name):
+    filtered = user_content_df[
+        (user_content_df["content_type"] == content_type) &
+        (user_content_df["liked"] == liked_value)
+    ]
+
+    top = (
+        filtered
+        .groupby("content_id")
+        .size()
+        .sort_values(ascending=False)
+        .head(10)
+        .reset_index()
+    )
+
+    top.columns = ["content_id", column_name]
+
+    top = top.merge(
+        content_df,
+        left_on="content_id",
+        right_on="id"
+    )
+
+    return top[
+        ["title", column_name]
+    ]
+
+
 @app.route("/stats", methods=["GET"])
 @jwt_required()
 @admin_required
 def get_all_stats():
-    movies = pd.read_sql(Movie.query.statement, db.engine)
-    series = pd.read_sql(Series.query.statement, db.engine)
-    users = pd.read_sql(User.query.statement, db.engine)
-    user_content = pd.read_sql(UserContent.query.statement, db.engine)
 
-    users = len(users)
-    movies = len(movies)
-    series = len(series)
+    # DataFrames
+    movies_df = pd.read_sql(Movie.query.statement, db.engine)
+    series_df = pd.read_sql(Series.query.statement, db.engine)
+    users_df = pd.read_sql(User.query.statement, db.engine)
+    user_content_df = pd.read_sql(UserContent.query.statement, db.engine)
+
+    # Estadísticas generales
+    users = len(users_df)
+    movies = len(movies_df)
+    series = len(series_df)
+
     likes = len(
-        user_content[
-            user_content["liked"] == True
+        user_content_df[
+            user_content_df["liked"] == True
         ]
     )
+
     dislikes = len(
-        user_content[
-            user_content["liked"] == False
+        user_content_df[
+            user_content_df["liked"] == False
         ]
     )
+
     my_list = len(
-    user_content[
-        user_content["in_list"] == True
+        user_content_df[
+            user_content_df["in_list"] == True
         ]
     )
-    movie_likes = user_content[
-        (user_content["content_type"] == "movie") &
-        (user_content["liked"] == True)
-    ]
-    top_movies = (
-        movie_likes
-            .groupby("content_id")
-            .size()
-            .sort_values(ascending=False)
-            .head(10)
-    )
-    top_movies = top_movies.reset_index()
-    top_movies.columns = ["content_id", "likes"]
-    top_movies = top_movies.merge(
-        movies,
-        left_on="content_id",
-        right_on="id"
-    )
-    top_movies = top_movies[
-        ["title", "likes"]
-    ]
-#----------------------------
-    serie_likes = user_content[
-        (user_content["content_type"] == "series") &
-        (user_content["liked"] == True)
-    ]
-    top_series = (
-        serie_likes
-            .groupby("content_id")
-            .size()
-            .sort_values(ascending=False)
-            .head(10)
-    )
-    top_series = top_series.reset_index()
-    top_series.columns = ["content_id", "likes"]
-    top_series = top_series.merge(
-        movies,
-        left_on="content_id",
-        right_on="id"
-    )
-    top_series = top_series[
-        ["title", "likes"]
-    ]
 
+    # Rankings
+    top_movies = get_top_content(
+        user_content_df,
+        movies_df,
+        "movie",
+        True,
+        "likes"
+    )
 
-#-------------------------------------------------
-    movie_dislikes = user_content[
-        (user_content["content_type"] == "movie") &
-        (user_content["liked"] == False)
-    ]
-    top_movies_dislike = (
-        movie_dislikes
-            .groupby("content_id")
-            .size()
-            .sort_values(ascending=False)
-            .head(10)
+    top_series = get_top_content(
+        user_content_df,
+        series_df,
+        "series",
+        True,
+        "likes"
     )
-    top_movies_dislike = top_movies_dislike.reset_index()
-    top_movies_dislike.columns = ["content_id", "dislikes"]
-    top_movies_dislike = top_movies_dislike.merge(
-        movies,
-        left_on="content_id",
-        right_on="id"
-    )
-    top_movies_dislike = top_movies_dislike[
-        ["title", "likes"]
-    ]
-#----------------------------
-    serie_dislikes = user_content[
-        (user_content["content_type"] == "series") &
-        (user_content["liked"] == False)
-    ]
-    top_series_dislike = (
-        serie_dislikes
-            .groupby("content_id")
-            .size()
-            .sort_values(ascending=False)
-            .head(10)
-    )
-    top_series_dislike = top_series_dislike.reset_index()
-    top_series_dislike.columns = ["content_id", "likes"]
-    top_series_dislike = top_series_dislike.merge(
-        movies,
-        left_on="content_id",
-        right_on="id"
-    )
-    top_series_dislike = top_series_dislike[
-        ["title", "likes"]
-    ]
 
+    top_movies_dislike = get_top_content(
+        user_content_df,
+        movies_df,
+        "movie",
+        False,
+        "dislikes"
+    )
+
+    top_series_dislike = get_top_content(
+        user_content_df,
+        series_df,
+        "series",
+        False,
+        "dislikes"
+    )
 
     return {
         "users": users,
@@ -664,12 +641,13 @@ def get_all_stats():
         "likes": likes,
         "dislikes": dislikes,
         "my_list": my_list,
+
         "top_movies": top_movies.to_dict(orient="records"),
         "top_series": top_series.to_dict(orient="records"),
+
         "top_movies_dislike": top_movies_dislike.to_dict(orient="records"),
         "top_series_dislike": top_series_dislike.to_dict(orient="records")
     }
-
 
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 5000))
