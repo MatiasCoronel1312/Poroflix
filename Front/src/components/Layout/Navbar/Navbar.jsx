@@ -52,7 +52,7 @@ export const Navbar = () => {
         })),
         ...series.map((serie) => ({
           ...serie,
-          type: "series",
+          type: "serie",
         })),
       ];
 
